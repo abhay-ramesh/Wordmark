@@ -30,7 +30,7 @@ export const metadata: Metadata = {
       "Meet Wordmark - Your Logo Maker with Google Fonts. No fuss, just smart logo creation. Pick from Google's font treasure and craft your brand's vibe. Perfect for devs, easy for all entrepreneurs.",
     images: [
       {
-        url: "https://wordmark.abhayramesh.com/wordmark.png",
+        url: "https://wordmark.abhayramesh.com/Wordmark.png",
         width: 1200,
         height: 630,
         alt: "Wordmark Logo Maker",
