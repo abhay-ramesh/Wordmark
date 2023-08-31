@@ -40,6 +40,8 @@ export const metadata: Metadata = {
     siteName: "Wordmark",
   },
   abstract: "Meet Wordmark - Your Logo Maker with Google Fonts.",
+  themeColor: "#ffffff",
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({
