@@ -1,113 +1,431 @@
-import Image from "next/image";
+"use client";
+
+import {
+  LayoutVariants,
+  Layouts,
+  SelectableLayoutCard,
+} from "@/components/custom/SelectableLayoutCard";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { Slider } from "@/components/ui/slider";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { LAYOUT_TYPES, Units } from "@/lib/constants";
+import { cn } from "@/lib/utils";
+import {
+  Boxes,
+  CaseSensitive,
+  FoldHorizontal,
+  FolderHeart,
+  LayoutDashboard,
+  Palette,
+} from "lucide-react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { ColorPicker, useColor } from "react-color-palette";
+import { IconGrid } from "../components/custom/IconGrid";
+import { SelectedIcon } from "../components/custom/SelectedIcon";
+import { GoogleFonts } from "./GoogleFonts";
+
+type UnitType = (typeof Units)[number];
 
 export default function Home() {
+  const [logoName, setLogoName] = useState<string>("Wordmark.");
+  const [icon, setIcon] = useState<string>("Boxes");
+  const [layout, setLayout] = useState<Layouts>("ltr");
+  const [bgColor, setBgColor] = useColor("#ffffff");
+  const [textColor, setTextColor] = useColor("#000000");
+  const [iconColor, setIconColor] = useColor("#4C5564");
+  const [cardSize, setCardSize] = useState<{
+    width: {
+      value: number;
+      unit: UnitType;
+    };
+    height: {
+      value: number;
+      unit: UnitType;
+    };
+  }>({
+    width: {
+      value: 400,
+      unit: "px",
+    },
+    height: {
+      value: 225,
+      unit: "px",
+    },
+  });
+
+  useEffect(() => {
+    const isMobile = window.matchMedia(
+      "only screen and (max-width: 768px)",
+    ).matches;
+
+    console.log("isMobile:", isMobile);
+
+    if (isMobile) {
+      setCardSize({
+        width: {
+          value: 300,
+          unit: "px",
+        },
+        height: {
+          value: 170,
+          unit: "px",
+        },
+      });
+    }
+  }, []);
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <>
+      <Credits isMobileViewVisible className="" />
+      <aside className="flex flex-col w-full h-2/3 md:h-full md:max-h-full md:w-2/5">
+        <div className="items-center justify-center flex-none hidden w-full h-20 space-x-2 text-center text-gray-600 border rounded-lg bg-primary-foreground md:flex">
+          <Boxes size={32} className="" />
+          <text className="w-fit text-center text-2xl font-semibold [text-wrap:balance]">
+            Wordmark
+          </text>
         </div>
+
+        <Tabs
+          orientation="vertical"
+          defaultValue="text"
+          className="flex flex-col w-full h-full mt-2 border rounded-lg md:max-h-full md:flex-1 md:flex-row md:overflow-auto"
+        >
+          <TabsList className="flex justify-start w-full overflow-x-auto rounded-r-none h-fit md:h-full md:w-fit md:flex-col md:overflow-x-visible">
+            <TabsTrigger
+              className="flex flex-col items-center justify-center w-full h-20 p-2 space-y-2 text-gray-600 aspect-square md:w-20"
+              value="text"
+            >
+              <CaseSensitive size={32} />
+              <text className="text-xs font-semibold text-gray-600">Text</text>
+            </TabsTrigger>
+            <Separator orientation="vertical" className="md:hidden" />
+            <Separator orientation="horizontal" className="hidden md:block" />
+            <TabsTrigger
+              className="flex flex-col items-center justify-center w-full h-20 p-2 space-y-2 text-gray-600 aspect-square md:w-20"
+              value="color"
+            >
+              <Palette size={32} />
+              <text className="text-xs font-semibold text-gray-600">Color</text>
+            </TabsTrigger>
+            <Separator orientation="vertical" className="md:hidden" />
+            <Separator orientation="horizontal" className="hidden md:block" />
+            <TabsTrigger
+              className="flex flex-col items-center justify-center w-full h-20 p-2 space-y-2 text-gray-600 aspect-square md:w-20"
+              value="icon"
+            >
+              <FolderHeart size={32} />
+              <text className="text-xs font-semibold text-gray-600">Icon</text>
+            </TabsTrigger>
+            <Separator orientation="vertical" className="md:hidden" />
+            <Separator orientation="horizontal" className="hidden md:block" />
+            <TabsTrigger
+              className="flex flex-col items-center justify-center w-full h-20 p-2 space-y-2 text-gray-600 aspect-square md:w-20"
+              value="space"
+            >
+              <FoldHorizontal size={32} />
+              <text className="text-xs font-semibold text-gray-600">Space</text>
+            </TabsTrigger>
+            <Separator orientation="vertical" className="md:hidden" />
+            <Separator orientation="horizontal" className="hidden md:block" />
+            <TabsTrigger
+              className="flex flex-col items-center justify-center w-full h-20 p-2 space-y-2 text-gray-600 aspect-square md:w-20"
+              value="layout"
+            >
+              <LayoutDashboard size={32} />
+              <text className="text-xs font-semibold text-gray-600">
+                Layout
+              </text>
+            </TabsTrigger>
+          </TabsList>
+          <Separator orientation="vertical" className="hidden md:block" />
+          <Separator orientation="horizontal" className="md:hidden" />
+          {/* Text Tab Content */}
+          <TabsContent
+            value="text"
+            className="w-full p-3 space-y-5 overflow-y-auto"
+          >
+            <div className="grid items-center w-full max-w-sm gap-2">
+              <Label htmlFor="business-name">Type your logo name</Label>
+              <Input
+                id="business-name"
+                type="text"
+                placeholder="Your Business Name"
+                value={logoName}
+                onChange={(e) => setLogoName(e.target.value)}
+              />
+            </div>
+            <div className="grid items-center w-full max-w-sm gap-2">
+              <Label>Set Background Height</Label>
+              <Slider
+                min={100}
+                max={500}
+                defaultValue={[cardSize.height.value]}
+                step={1}
+                onValueChange={(value) =>
+                  setCardSize((prev) => ({
+                    ...prev,
+                    height: { ...prev.height, value: value[0] },
+                  }))
+                }
+                className="py-2"
+              />
+              <div className="flex space-x-2">
+                <Input
+                  id="business-height-value"
+                  type="number"
+                  placeholder="Height"
+                  className=""
+                  value={cardSize.height.value}
+                  onChange={(e) =>
+                    setCardSize((prev) => ({
+                      ...prev,
+                      height: {
+                        ...prev.height,
+                        value: Number(e.target.value),
+                      },
+                    }))
+                  }
+                />
+                <Select
+                  defaultValue={cardSize.height.unit}
+                  onValueChange={(value) =>
+                    setCardSize((prev) => ({
+                      ...prev,
+                      height: { ...prev.height, unit: value as UnitType },
+                    }))
+                  }
+                >
+                  <SelectTrigger className="w-fit">
+                    <SelectValue placeholder="Unit" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Units.map((unit) => (
+                      <SelectItem key={unit} value={unit}>
+                        {unit}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="grid items-center w-full max-w-sm gap-2">
+              <Label>Set Background Width</Label>
+              <Slider
+                min={100}
+                max={500}
+                defaultValue={[cardSize.width.value]}
+                step={1}
+                onValueChange={(value) =>
+                  setCardSize((prev) => ({
+                    ...prev,
+                    width: { ...prev.width, value: value[0] },
+                  }))
+                }
+                className="py-2"
+              />
+              <div className="flex space-x-2">
+                <Input
+                  id="business-width-value"
+                  type="number"
+                  placeholder="Width"
+                  className=""
+                  value={cardSize.width.value}
+                  onChange={(e) =>
+                    setCardSize((prev) => ({
+                      ...prev,
+                      width: { ...prev.width, value: Number(e.target.value) },
+                    }))
+                  }
+                />
+                <Select
+                  defaultValue={cardSize.width.unit}
+                  onValueChange={(value) =>
+                    setCardSize((prev) => ({
+                      ...prev,
+                      width: { ...prev.width, unit: value as UnitType },
+                    }))
+                  }
+                >
+                  <SelectTrigger className="w-fit">
+                    <SelectValue placeholder="Unit" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Units.map((unit) => (
+                      <SelectItem key={unit} value={unit}>
+                        {unit}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <GoogleFonts />
+          </TabsContent>
+          {/* Color Tab Content */}
+          <TabsContent
+            value="color"
+            className="w-full p-3 space-y-5 overflow-y-auto"
+          >
+            <Tabs defaultValue="text" className="w-full">
+              <TabsList className="w-full">
+                <TabsTrigger className="w-full" value="text">
+                  Text
+                </TabsTrigger>
+                <TabsTrigger className="w-full" value="icon">
+                  Icon
+                </TabsTrigger>
+                <TabsTrigger className="w-full" value="background">
+                  Background
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="text">
+                <div className="grid items-center w-full max-w-sm gap-2">
+                  <text className="px-2 text-lg font-semibold text-gray-600">
+                    Pick Color for Text
+                  </text>
+                  <ColorPicker color={textColor} onChange={setTextColor} />
+                </div>
+              </TabsContent>
+
+              <TabsContent value="icon">
+                <div className="grid items-center w-full max-w-sm gap-2">
+                  <text className="px-2 text-lg font-semibold text-gray-600">
+                    Pick Color for Icon
+                  </text>
+                  <ColorPicker color={iconColor} onChange={setIconColor} />
+                </div>
+              </TabsContent>
+              <TabsContent value="background">
+                <div className="grid items-center w-full max-w-sm gap-2">
+                  <text className="px-2 text-lg font-semibold text-gray-600">
+                    Pick Color for Background
+                  </text>
+                  <ColorPicker color={bgColor} onChange={setBgColor} />
+                </div>
+              </TabsContent>
+            </Tabs>
+          </TabsContent>
+          {/* Icon Tab Content */}
+          <TabsContent
+            value="icon"
+            className="w-full p-3 space-y-2 overflow-y-auto"
+          >
+            <div className="grid items-center w-full max-w-sm gap-2 ">
+              <Label htmlFor="business-icon">Pick an icon</Label>
+              <Input
+                id="business-icon"
+                type="text"
+                placeholder="Icon"
+                value={icon}
+                onChange={(e) => setIcon(e.target.value)}
+                disabled
+              />
+            </div>
+            <SelectedIcon icon={icon} />
+            {/* Icons */}
+            <IconGrid icon={icon} setIcon={setIcon} />
+          </TabsContent>
+          {/* Layout Tab Content */}
+          <TabsContent
+            value="layout"
+            className="w-full p-3 space-y-2 overflow-y-auto"
+          >
+            {LAYOUT_TYPES.map((layoutType) => (
+              <SelectableLayoutCard
+                key={layoutType}
+                layout={layoutType}
+                isSelected={layoutType === layout}
+                onClick={() => setLayout(layoutType)}
+              />
+            ))}
+          </TabsContent>
+        </Tabs>
+      </aside>
+      <div className="relative flex items-center justify-center w-full p-4 border rounded-lg h-1/3 md:h-full">
+        <Card
+          className={cn(LayoutVariants({ layout }), "mx-auto my-4 shadow-2xl")}
+          // add height and width
+          style={{
+            backgroundColor: bgColor.hex,
+            height: cardSize.height.value + cardSize.height.unit,
+            width: cardSize.width.value + cardSize.width.unit,
+          }}
+        >
+          {layout !== "text" && (
+            <SelectedIcon
+              icon={icon}
+              onlyIcon
+              style={{ color: iconColor.hex }}
+            />
+          )}
+          {layout !== "icon" && (
+            <text
+              className={cn(
+                "w-fit text-center text-2xl font-semibold text-gray-600 [text-wrap:balance]",
+              )}
+              style={{ color: textColor.hex }}
+            >
+              {logoName}
+            </text>
+          )}
+        </Card>
+        <Credits isMobileViewVisible={false} />
       </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
+      <div className="flex items-center justify-center w-full h-20 space-x-2 text-center text-gray-600 border rounded-lg bg-primary-foreground md:hidden">
+        <Boxes size={32} className="" />
+        <text className="w-fit text-center text-2xl font-semibold [text-wrap:balance]">
+          Wordmark
+        </text>
       </div>
-
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore the Next.js 13 playground.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+    </>
   );
+
+  function Credits({
+    className,
+    isMobileViewVisible = false,
+  }: {
+    className?: string;
+    isMobileViewVisible: boolean;
+  }) {
+    return (
+      <div
+        className={cn(
+          "mx-auto w-fit px-8 text-center text-xs text-slate-800 [text-wrap:balance]",
+          {
+            "block rounded-md border bg-gray-800 py-2 text-slate-100 md:hidden":
+              isMobileViewVisible,
+            "absolute bottom-4 hidden md:block": !isMobileViewVisible,
+          },
+          className,
+        )}
+      >
+        Created by{" "}
+        <Link
+          href="https://github/abhay-ramesh"
+          className="text-red-400 underline"
+        >
+          Abhay Ramesh
+        </Link>
+        . Source code available on{" "}
+        <Link
+          href="https://github.com/abhay-ramesh/wordmark"
+          className="text-red-400 underline"
+        >
+          GitHub
+        </Link>
+        .
+      </div>
+    );
+  }
 }
