@@ -412,7 +412,7 @@ export default function Home() {
       >
         Created by{" "}
         <Link
-          href="https://github/abhay-ramesh"
+          href="https://github.com/abhay-ramesh"
           className="text-red-400 underline"
         >
           Abhay Ramesh
