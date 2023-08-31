@@ -369,7 +369,8 @@ export default function Home() {
               style={{ color: iconColor.hex }}
             />
           )}
-          {layout !== "icon" && (
+      {layout !== "icon" && layout !== "circle" && (
+
             <text
               className={cn(
                 "w-fit text-center text-2xl font-semibold text-gray-600 [text-wrap:balance]",

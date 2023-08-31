@@ -17,6 +17,7 @@ export const LayoutVariants = cva(
         dtt: "flex-col-reverse w-full space-y-2 space-y-reverse",
         icon: "mx-auto border-dashed aspect-square",
         text: "w-full",
+        circle: "mx-auto border-dashed aspect-square rounded-full",
       },
       isSelected: {
         true: "ring-2 ring-blue-500 bg-blue-400 text-white",
@@ -45,10 +46,15 @@ export const SelectableLayoutCard = ({
       className={cn(LayoutVariants({ layout, isSelected }))}
       onClick={onClick}
     >
-      {layout !== "text" && (
-        <div className="aspect-square h-16 w-16 rounded-md bg-muted" />
-      )}
-      {layout !== "icon" && <div className="h-10 w-28 rounded-md bg-muted" />}
+      {layout !== "text" &&
+        ( layout !== "circle" ? (
+          <div className="w-16 h-16 rounded-md aspect-square bg-muted" />
+        ) : (
+          <div className="w-16 h-16 rounded-full aspect-square bg-muted" />
+        ))}
+      {layout !== "icon" && layout !== "circle" ? (
+        <div className="h-10 rounded-md w-28 bg-muted" />
+      ) : null}
     </Card>
   );
 };

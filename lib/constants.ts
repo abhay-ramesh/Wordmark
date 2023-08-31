@@ -1,4 +1,12 @@
-const LAYOUT_TYPES = ["ltr", "rtl", "ttd", "dtt", "text", "icon"] as const;
+const LAYOUT_TYPES = [
+  "ltr",
+  "rtl",
+  "ttd",
+  "dtt",
+  "text",
+  "icon",
+  "circle",
+] as const;
 
 const Units = [
   "px",

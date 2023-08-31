@@ -5,10 +5,11 @@ import * as icons from "lucide-react";
 
 export const SelectedIcon = ({
   icon,
-  iconSize = 32,
+  iconSize = 42,
   onlyIcon = false,
   className = "",
   absoluteStrokeWidth,
+  strokeWidth,
   style,
 }: {
   icon: string;
@@ -16,6 +17,7 @@ export const SelectedIcon = ({
   onlyIcon?: boolean;
   className?: string;
   absoluteStrokeWidth?: boolean;
+  strokeWidth?: number;
   style?: React.CSSProperties;
 }) => {
   if (icon === "") return null;
@@ -28,6 +30,7 @@ export const SelectedIcon = ({
         size={iconSize}
         className={className}
         absoluteStrokeWidth={absoluteStrokeWidth}
+        strokeWidth={strokeWidth}
         style={style}
       />
     );

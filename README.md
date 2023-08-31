@@ -1,8 +1,8 @@
-![Wordmark Logo](public/Wordmark.png)
+![Wordmark Logo](public/wordmark.png)
 
 # Wordmark - Effortless Logo Design with Google Fonts
 
-Welcome to Wordmark - your companion for creating logos with the ease of a pro and the heart of an entrepreneur.
+Welcome to Wordmark - your partner for creating logos with the ease of a pro and the heart of an entrepreneur. Experience it yourself by visiting our live demo at [wordmark.abhayramesh.com](https://wordmark.abhayramesh.com/)!
 
 ## Introducing Wordmark
 
@@ -16,13 +16,9 @@ Say goodbye to logo design headaches! Wordmark is here to simplify the process a
 
 - **User-Friendly Magic:** No steep learning curves. No design jargon. Just a straightforward, intuitive interface that helps you bring your brand to life.
 
-## Getting Started
+## Try It Out
 
-1. **Clone the Repo:** Visit our repository and clone it to your workspace.
-
-2. **Installation:** Follow the setup instructions. Think of it like preparing the canvas for your masterpiece.
-
-3. **Unleash Your Brand:** Open Wordmark, explore the array of Google Fonts, and watch your brand vision take shape effortlessly.
+Ready to dive in? Go straight to our website and start crafting your logo today: [wordmark.abhayramesh.com](https://wordmark.abhayramesh.com/)
 
 ## Join the Journey
 

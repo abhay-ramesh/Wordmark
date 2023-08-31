@@ -9,6 +9,36 @@ export const metadata: Metadata = {
   title: "Wordmark - Logo Maker with Google Fonts",
   description:
     "Meet Wordmark - Your Logo Maker with Google Fonts. No fuss, just smart logo creation. Pick from Google's font treasure and craft your brand's vibe. Perfect for devs, easy for all entrepreneurs.",
+  applicationName: "Wordmark",
+  keywords: [
+    "logo maker",
+    "logo generator",
+    "logo with google fonts",
+    "google fonts logo maker",
+    "google fonts logo generator",
+    "logo maker with google fonts",
+    "logo generator with google fonts",
+    "font logo maker",
+  ],
+  creator: "Abhay Ramesh <abhayramesh.com>",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://wordmark.abhayramesh.com/",
+    title: "Wordmark - Logo Maker with Google Fonts",
+    description:
+      "Meet Wordmark - Your Logo Maker with Google Fonts. No fuss, just smart logo creation. Pick from Google's font treasure and craft your brand's vibe. Perfect for devs, easy for all entrepreneurs.",
+    images: [
+      {
+        url: "https://wordmark.abhayramesh.com/wordmark.png",
+        width: 1200,
+        height: 630,
+        alt: "Wordmark Logo Maker",
+      },
+    ],
+    siteName: "Wordmark",
+  },
+  abstract: "Meet Wordmark - Your Logo Maker with Google Fonts.",
 };
 
 export default function RootLayout({
