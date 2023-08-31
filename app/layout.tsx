@@ -2,6 +2,7 @@ import { ThemeProvider } from "@/components/custom/theme-provider";
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import GoogleAnalytics from "./GoogleAnalytics";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -54,6 +55,7 @@ export default function RootLayout({
           " flex min-h-screen flex-col-reverse justify-end space-y-2 space-y-reverse bg-muted  p-4 md:h-screen md:flex-row md:space-x-2 md:space-y-0"
         }
       >
+        <GoogleAnalytics />
         {/* <ThemeProvider attribute="class" defaultTheme="system" enableSystem> */}
         {children}
         {/* </ThemeProvider> */}

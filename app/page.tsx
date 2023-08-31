@@ -88,8 +88,8 @@ export default function Home() {
   return (
     <>
       <Credits isMobileViewVisible className="" />
-      <aside className="flex flex-col w-full h-2/3 md:h-full md:max-h-full md:w-2/5">
-        <div className="items-center justify-center flex-none hidden w-full h-20 space-x-2 text-center text-gray-600 border rounded-lg bg-primary-foreground md:flex">
+      <aside className="flex h-2/3 w-full flex-col md:h-full md:max-h-full md:w-2/5">
+        <div className="hidden h-20 w-full flex-none items-center justify-center space-x-2 rounded-lg border bg-primary-foreground text-center text-gray-600 md:flex">
           <Boxes size={32} className="" />
           <text className="w-fit text-center text-2xl font-semibold [text-wrap:balance]">
             Wordmark
@@ -99,11 +99,11 @@ export default function Home() {
         <Tabs
           orientation="vertical"
           defaultValue="text"
-          className="flex flex-col w-full h-full mt-2 border rounded-lg md:max-h-full md:flex-1 md:flex-row md:overflow-auto"
+          className="mt-2 flex h-full w-full flex-col rounded-lg border md:max-h-full md:flex-1 md:flex-row md:overflow-auto"
         >
-          <TabsList className="flex justify-start w-full overflow-x-auto rounded-r-none h-fit md:h-full md:w-fit md:flex-col md:overflow-x-visible">
+          <TabsList className="flex h-fit w-full justify-start overflow-x-auto rounded-r-none md:h-full md:w-fit md:flex-col md:overflow-x-visible">
             <TabsTrigger
-              className="flex flex-col items-center justify-center w-full h-20 p-2 space-y-2 text-gray-600 aspect-square md:w-20"
+              className="flex aspect-square h-20 w-full flex-col items-center justify-center space-y-2 p-2 text-gray-600 md:w-20"
               value="text"
             >
               <CaseSensitive size={32} />
@@ -112,7 +112,7 @@ export default function Home() {
             <Separator orientation="vertical" className="md:hidden" />
             <Separator orientation="horizontal" className="hidden md:block" />
             <TabsTrigger
-              className="flex flex-col items-center justify-center w-full h-20 p-2 space-y-2 text-gray-600 aspect-square md:w-20"
+              className="flex aspect-square h-20 w-full flex-col items-center justify-center space-y-2 p-2 text-gray-600 md:w-20"
               value="color"
             >
               <Palette size={32} />
@@ -121,7 +121,7 @@ export default function Home() {
             <Separator orientation="vertical" className="md:hidden" />
             <Separator orientation="horizontal" className="hidden md:block" />
             <TabsTrigger
-              className="flex flex-col items-center justify-center w-full h-20 p-2 space-y-2 text-gray-600 aspect-square md:w-20"
+              className="flex aspect-square h-20 w-full flex-col items-center justify-center space-y-2 p-2 text-gray-600 md:w-20"
               value="icon"
             >
               <FolderHeart size={32} />
@@ -130,7 +130,7 @@ export default function Home() {
             <Separator orientation="vertical" className="md:hidden" />
             <Separator orientation="horizontal" className="hidden md:block" />
             <TabsTrigger
-              className="flex flex-col items-center justify-center w-full h-20 p-2 space-y-2 text-gray-600 aspect-square md:w-20"
+              className="flex aspect-square h-20 w-full flex-col items-center justify-center space-y-2 p-2 text-gray-600 md:w-20"
               value="space"
             >
               <FoldHorizontal size={32} />
@@ -139,7 +139,7 @@ export default function Home() {
             <Separator orientation="vertical" className="md:hidden" />
             <Separator orientation="horizontal" className="hidden md:block" />
             <TabsTrigger
-              className="flex flex-col items-center justify-center w-full h-20 p-2 space-y-2 text-gray-600 aspect-square md:w-20"
+              className="flex aspect-square h-20 w-full flex-col items-center justify-center space-y-2 p-2 text-gray-600 md:w-20"
               value="layout"
             >
               <LayoutDashboard size={32} />
@@ -153,9 +153,9 @@ export default function Home() {
           {/* Text Tab Content */}
           <TabsContent
             value="text"
-            className="w-full p-3 space-y-5 overflow-y-auto"
+            className="w-full space-y-5 overflow-y-auto p-3"
           >
-            <div className="grid items-center w-full max-w-sm gap-2">
+            <div className="grid w-full max-w-sm items-center gap-2">
               <Label htmlFor="business-name">Type your logo name</Label>
               <Input
                 id="business-name"
@@ -165,7 +165,7 @@ export default function Home() {
                 onChange={(e) => setLogoName(e.target.value)}
               />
             </div>
-            <div className="grid items-center w-full max-w-sm gap-2">
+            <div className="grid w-full max-w-sm items-center gap-2">
               <Label>Set Background Height</Label>
               <Slider
                 min={100}
@@ -219,7 +219,7 @@ export default function Home() {
                 </Select>
               </div>
             </div>
-            <div className="grid items-center w-full max-w-sm gap-2">
+            <div className="grid w-full max-w-sm items-center gap-2">
               <Label>Set Background Width</Label>
               <Slider
                 min={100}
@@ -275,7 +275,7 @@ export default function Home() {
           {/* Color Tab Content */}
           <TabsContent
             value="color"
-            className="w-full p-3 space-y-5 overflow-y-auto"
+            className="w-full space-y-5 overflow-y-auto p-3"
           >
             <Tabs defaultValue="text" className="w-full">
               <TabsList className="w-full">
@@ -290,7 +290,7 @@ export default function Home() {
                 </TabsTrigger>
               </TabsList>
               <TabsContent value="text">
-                <div className="grid items-center w-full max-w-sm gap-2">
+                <div className="grid w-full max-w-sm items-center gap-2">
                   <text className="px-2 text-lg font-semibold text-gray-600">
                     Pick Color for Text
                   </text>
@@ -299,7 +299,7 @@ export default function Home() {
               </TabsContent>
 
               <TabsContent value="icon">
-                <div className="grid items-center w-full max-w-sm gap-2">
+                <div className="grid w-full max-w-sm items-center gap-2">
                   <text className="px-2 text-lg font-semibold text-gray-600">
                     Pick Color for Icon
                   </text>
@@ -307,7 +307,7 @@ export default function Home() {
                 </div>
               </TabsContent>
               <TabsContent value="background">
-                <div className="grid items-center w-full max-w-sm gap-2">
+                <div className="grid w-full max-w-sm items-center gap-2">
                   <text className="px-2 text-lg font-semibold text-gray-600">
                     Pick Color for Background
                   </text>
@@ -319,9 +319,9 @@ export default function Home() {
           {/* Icon Tab Content */}
           <TabsContent
             value="icon"
-            className="w-full p-3 space-y-2 overflow-y-auto"
+            className="w-full space-y-2 overflow-y-auto p-3"
           >
-            <div className="grid items-center w-full max-w-sm gap-2 ">
+            <div className="grid w-full max-w-sm items-center gap-2 ">
               <Label htmlFor="business-icon">Pick an icon</Label>
               <Input
                 id="business-icon"
@@ -339,7 +339,7 @@ export default function Home() {
           {/* Layout Tab Content */}
           <TabsContent
             value="layout"
-            className="w-full p-3 space-y-2 overflow-y-auto"
+            className="w-full space-y-2 overflow-y-auto p-3"
           >
             {LAYOUT_TYPES.map((layoutType) => (
               <SelectableLayoutCard
@@ -352,7 +352,7 @@ export default function Home() {
           </TabsContent>
         </Tabs>
       </aside>
-      <div className="relative flex items-center justify-center w-full p-4 border rounded-lg h-1/3 md:h-full">
+      <div className="relative flex h-1/3 w-full items-center justify-center rounded-lg border p-4 md:h-full">
         <Card
           className={cn(LayoutVariants({ layout }), "mx-auto my-4 shadow-2xl")}
           // add height and width
@@ -369,8 +369,7 @@ export default function Home() {
               style={{ color: iconColor.hex }}
             />
           )}
-      {layout !== "icon" && layout !== "circle" && (
-
+          {layout !== "icon" && layout !== "circle" && (
             <text
               className={cn(
                 "w-fit text-center text-2xl font-semibold text-gray-600 [text-wrap:balance]",
@@ -383,7 +382,7 @@ export default function Home() {
         </Card>
         <Credits isMobileViewVisible={false} />
       </div>
-      <div className="flex items-center justify-center w-full h-20 space-x-2 text-center text-gray-600 border rounded-lg bg-primary-foreground md:hidden">
+      <div className="flex h-20 w-full items-center justify-center space-x-2 rounded-lg border bg-primary-foreground text-center text-gray-600 md:hidden">
         <Boxes size={32} className="" />
         <text className="w-fit text-center text-2xl font-semibold [text-wrap:balance]">
           Wordmark

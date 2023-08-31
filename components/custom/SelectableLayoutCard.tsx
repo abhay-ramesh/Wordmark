@@ -47,13 +47,13 @@ export const SelectableLayoutCard = ({
       onClick={onClick}
     >
       {layout !== "text" &&
-        ( layout !== "circle" ? (
-          <div className="w-16 h-16 rounded-md aspect-square bg-muted" />
+        (layout !== "circle" ? (
+          <div className="aspect-square h-16 w-16 rounded-md bg-muted" />
         ) : (
-          <div className="w-16 h-16 rounded-full aspect-square bg-muted" />
+          <div className="aspect-square h-16 w-16 rounded-full bg-muted" />
         ))}
       {layout !== "icon" && layout !== "circle" ? (
-        <div className="h-10 rounded-md w-28 bg-muted" />
+        <div className="h-10 w-28 rounded-md bg-muted" />
       ) : null}
     </Card>
   );
