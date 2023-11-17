@@ -3,6 +3,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import GoogleAnalytics from "./GoogleAnalytics";
+import { Providers } from "./Providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -51,16 +52,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body
-        className={
-          inter.className +
-          " flex min-h-screen flex-col-reverse justify-end space-y-2 space-y-reverse bg-muted  p-4 md:h-screen md:flex-row md:space-x-2 md:space-y-0"
-        }
-      >
+      <body className={inter.className + ""}>
         <GoogleAnalytics />
-        {/* <ThemeProvider attribute="class" defaultTheme="system" enableSystem> */}
-        {children}
-        {/* </ThemeProvider> */}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

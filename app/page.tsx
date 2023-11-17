@@ -20,54 +20,51 @@ import { Slider } from "@/components/ui/slider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LAYOUT_TYPES, Units } from "@/lib/constants";
 import { cn } from "@/lib/utils";
-import {
-  Boxes,
-  CaseSensitive,
-  FoldHorizontal,
-  FolderHeart,
-  LayoutDashboard,
-  Palette,
-} from "lucide-react";
+import { Boxes } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { ColorPicker, IColor, useColor } from "react-color-palette";
-import { GoogleFonts } from "./GoogleFonts";
+import { useEffect, useRef, useState } from "react";
+import {
+  ColorPicker,
+  ColorService,
+  IColor,
+  useColor,
+} from "react-color-palette";
+import { FontSelector } from "../components/custom/FontSelector";
 import { IconSelector } from "@/components/icons/IconSelector";
 import {
   LucideIcon,
   LucideIconStatic,
   LucideIconType,
 } from "@/components/icons";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
+import {
+  cardAtom,
+  fontAtom,
+  iconAtom,
+  logoNameAtom,
+  textAtom,
+} from "@/lib/statemanager";
+import { MenuList } from "./MenuList";
+import GoogleFontLoader from "react-google-font-loader";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { FontLoader } from "@/lib/fonts";
 
 type UnitType = (typeof Units)[number];
 
 export default function Home() {
-  const [logoName, setLogoName] = useState<string>("Wordmark.");
-  const [icon, setIcon] = useState<LucideIconType>("boxes");
+  const selectedFont = useAtomValue(fontAtom);
+  const [icon, setIcon] = useAtom(iconAtom);
   const [layout, setLayout] = useState<Layouts>("ltr");
-  const [bgColor, setBgColor] = useColor("#ffffff");
-  const [textColor, setTextColor] = useColor("#000000");
-  const [iconColor, setIconColor] = useColor("#4C5564");
-  const [cardSize, setCardSize] = useState<{
-    width: {
-      value: number;
-      unit: UnitType;
-    };
-    height: {
-      value: number;
-      unit: UnitType;
-    };
-  }>({
-    width: {
-      value: 400,
-      unit: "px",
-    },
-    height: {
-      value: 225,
-      unit: "px",
-    },
-  });
+
+  const [card, setCard] = useAtom(cardAtom);
+  const [lockDimensions, setLockDimensions] = useState(false);
+
+  const [textState, setTextState] = useAtom(textAtom);
 
   useEffect(() => {
     const isMobile = window.matchMedia(
@@ -77,21 +74,40 @@ export default function Home() {
     console.log("isMobile:", isMobile);
 
     if (isMobile) {
-      setCardSize({
-        width: {
-          value: 300,
-          unit: "px",
-        },
-        height: {
-          value: 170,
-          unit: "px",
-        },
-      });
+      if (layout === "icon" || layout === "circle") {
+        updateCardDimensions(200, 200);
+      } else {
+        updateCardDimensions(170, 300);
+      }
     }
   }, []);
 
+  // Function to update card dimensions
+  const updateCardDimensions = (height: number, width: number) => {
+    setCard((prev) => ({
+      ...prev,
+      height: { ...prev.height, value: height },
+      width: { ...prev.width, value: width },
+    }));
+  };
+
+  // Function to handle dimension change with lock
+  const handleDimensionChange = (
+    dimension: "height" | "width",
+    value: number,
+  ) => {
+    if (layout === "icon" || layout === "circle") {
+      updateCardDimensions(value, value);
+    } else {
+      updateCardDimensions(
+        dimension === "height" ? value : card.height.value,
+        dimension === "width" ? value : card.width.value,
+      );
+    }
+  };
+
   return (
-    <>
+    <div className="flex min-h-screen flex-col-reverse justify-end space-y-2 space-y-reverse bg-muted p-4 md:h-screen md:flex-row md:space-x-2 md:space-y-0">
       <Credits isMobileViewVisible className="" />
       <aside className="flex h-2/3 w-full flex-col md:h-full md:max-h-full md:w-2/5">
         <div className="hidden h-20 w-full flex-none items-center justify-center space-x-2 rounded-lg border bg-primary-foreground text-center text-gray-600 md:flex">
@@ -106,53 +122,7 @@ export default function Home() {
           defaultValue="text"
           className="mt-2 flex h-full w-full flex-col rounded-lg border md:max-h-full md:flex-1 md:flex-row md:overflow-auto"
         >
-          <TabsList className="flex h-fit w-full justify-start overflow-x-auto rounded-r-none md:h-full md:w-fit md:flex-col md:overflow-x-visible">
-            <TabsTrigger
-              className="flex aspect-square h-20 w-full flex-col items-center justify-center space-y-2 p-2 text-gray-600 md:w-20"
-              value="text"
-            >
-              <CaseSensitive size={32} />
-              <text className="text-xs font-semibold text-gray-600">Text</text>
-            </TabsTrigger>
-            <Separator orientation="vertical" className="md:hidden" />
-            <Separator orientation="horizontal" className="hidden md:block" />
-            <TabsTrigger
-              className="flex aspect-square h-20 w-full flex-col items-center justify-center space-y-2 p-2 text-gray-600 md:w-20"
-              value="color"
-            >
-              <Palette size={32} />
-              <text className="text-xs font-semibold text-gray-600">Color</text>
-            </TabsTrigger>
-            <Separator orientation="vertical" className="md:hidden" />
-            <Separator orientation="horizontal" className="hidden md:block" />
-            <TabsTrigger
-              className="flex aspect-square h-20 w-full flex-col items-center justify-center space-y-2 p-2 text-gray-600 md:w-20"
-              value="icon"
-            >
-              <FolderHeart size={32} />
-              <text className="text-xs font-semibold text-gray-600">Icon</text>
-            </TabsTrigger>
-            <Separator orientation="vertical" className="md:hidden" />
-            <Separator orientation="horizontal" className="hidden md:block" />
-            <TabsTrigger
-              className="flex aspect-square h-20 w-full flex-col items-center justify-center space-y-2 p-2 text-gray-600 md:w-20"
-              value="space"
-            >
-              <FoldHorizontal size={32} />
-              <text className="text-xs font-semibold text-gray-600">Space</text>
-            </TabsTrigger>
-            <Separator orientation="vertical" className="md:hidden" />
-            <Separator orientation="horizontal" className="hidden md:block" />
-            <TabsTrigger
-              className="flex aspect-square h-20 w-full flex-col items-center justify-center space-y-2 p-2 text-gray-600 md:w-20"
-              value="layout"
-            >
-              <LayoutDashboard size={32} />
-              <text className="text-xs font-semibold text-gray-600">
-                Layout
-              </text>
-            </TabsTrigger>
-          </TabsList>
+          <MenuList />
           <Separator orientation="vertical" className="hidden md:block" />
           <Separator orientation="horizontal" className="md:hidden" />
           {/* Text Tab Content */}
@@ -166,22 +136,84 @@ export default function Home() {
                 id="business-name"
                 type="text"
                 placeholder="Your Business Name"
-                value={logoName}
-                onChange={(e) => setLogoName(e.target.value)}
+                value={textState.text}
+                onChange={(e) =>
+                  setTextState((prev) => ({ ...prev, text: e.target.value }))
+                }
               />
             </div>
+
+            {/* Set Font Size */}
+            <div className="grid w-full max-w-sm items-center gap-2">
+              <Label htmlFor="font-size">Set Font Size</Label>
+              <Slider
+                min={12}
+                max={72}
+                step={1}
+                value={[textState.size]}
+                onValueChange={(value) =>
+                  setTextState((prev) => ({ ...prev, size: value[0] }))
+                }
+                className="py-2"
+              />
+              <Input
+                id="font-size"
+                type="number"
+                placeholder="Font Size"
+                className=""
+                value={textState.size}
+                onChange={(e) => {
+                  setTextState((prev) => ({
+                    ...prev,
+                    size: Number(e.target.value),
+                  }));
+                }}
+              />
+            </div>
+
+            {/* Pick Font Color */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <div>
+                  <Button
+                    variant="outline"
+                    className="flex w-fit items-center justify-between p-0"
+                  >
+                    <span className="px-2">Pick Font Color</span>
+                    <div
+                      className="inline-block aspect-square h-full rounded-r-md"
+                      style={{ backgroundColor: textState.color.hex }}
+                    />
+                  </Button>
+                </div>
+              </PopoverTrigger>
+              <PopoverContent className="w-fit bg-primary-foreground">
+                <ColorPicker
+                  color={textState.color}
+                  onChange={(color) =>
+                    setTextState((prev) => ({ ...prev, color: color }))
+                  }
+                />
+              </PopoverContent>
+            </Popover>
+
+            {/* Pick Font */}
+            <FontSelector />
+          </TabsContent>
+          {/* Color Tab Content */}
+          <TabsContent
+            value="card"
+            className="w-full space-y-5 overflow-y-auto p-3"
+          >
             <div className="grid w-full max-w-sm items-center gap-2">
               <Label>Set Background Height</Label>
               <Slider
                 min={100}
                 max={500}
-                defaultValue={[cardSize.height.value]}
+                defaultValue={[card.height.value]}
                 step={1}
                 onValueChange={(value) =>
-                  setCardSize((prev) => ({
-                    ...prev,
-                    height: { ...prev.height, value: value[0] },
-                  }))
+                  handleDimensionChange("height", value[0])
                 }
                 className="py-2"
               />
@@ -191,21 +223,15 @@ export default function Home() {
                   type="number"
                   placeholder="Height"
                   className=""
-                  value={cardSize.height.value}
+                  value={card.height.value}
                   onChange={(e) =>
-                    setCardSize((prev) => ({
-                      ...prev,
-                      height: {
-                        ...prev.height,
-                        value: Number(e.target.value),
-                      },
-                    }))
+                    handleDimensionChange("height", Number(e.target.value))
                   }
                 />
                 <Select
-                  defaultValue={cardSize.height.unit}
+                  defaultValue={card.height.unit}
                   onValueChange={(value) =>
-                    setCardSize((prev) => ({
+                    setCard((prev) => ({
                       ...prev,
                       height: { ...prev.height, unit: value as UnitType },
                     }))
@@ -229,13 +255,10 @@ export default function Home() {
               <Slider
                 min={100}
                 max={500}
-                defaultValue={[cardSize.width.value]}
+                defaultValue={[card.width.value]}
                 step={1}
                 onValueChange={(value) =>
-                  setCardSize((prev) => ({
-                    ...prev,
-                    width: { ...prev.width, value: value[0] },
-                  }))
+                  handleDimensionChange("width", value[0])
                 }
                 className="py-2"
               />
@@ -245,18 +268,15 @@ export default function Home() {
                   type="number"
                   placeholder="Width"
                   className=""
-                  value={cardSize.width.value}
+                  value={card.width.value}
                   onChange={(e) =>
-                    setCardSize((prev) => ({
-                      ...prev,
-                      width: { ...prev.width, value: Number(e.target.value) },
-                    }))
+                    handleDimensionChange("width", Number(e.target.value))
                   }
                 />
                 <Select
-                  defaultValue={cardSize.width.unit}
+                  defaultValue={card.width.unit}
                   onValueChange={(value) =>
-                    setCardSize((prev) => ({
+                    setCard((prev) => ({
                       ...prev,
                       width: { ...prev.width, unit: value as UnitType },
                     }))
@@ -275,77 +295,90 @@ export default function Home() {
                 </Select>
               </div>
             </div>
-            <GoogleFonts />
-          </TabsContent>
-          {/* Color Tab Content */}
-          <TabsContent
-            value="color"
-            className="w-full space-y-5 overflow-y-auto p-3"
-          >
-            <Tabs defaultValue="text" className="w-full">
-              <TabsList className="w-full">
-                <TabsTrigger className="w-full" value="text">
-                  Text
-                </TabsTrigger>
-                <TabsTrigger className="w-full" value="icon">
-                  Icon
-                </TabsTrigger>
-                <TabsTrigger className="w-full" value="background">
-                  Background
-                </TabsTrigger>
-              </TabsList>
-              <TabsContent value="text">
-                <div className="grid w-full max-w-sm items-center gap-2">
-                  <text className="px-2 text-lg font-semibold text-gray-600">
-                    Pick Color for Text
-                  </text>
-                  <ColorPicker color={textColor} onChange={setTextColor} />
-                </div>
-              </TabsContent>
-
-              <TabsContent value="icon">
-                <div className="grid w-full max-w-sm items-center gap-2">
-                  <text className="px-2 text-lg font-semibold text-gray-600">
-                    Pick Color for Icon
-                  </text>
-                  <ColorPicker color={iconColor} onChange={setIconColor} />
-                </div>
-              </TabsContent>
-              <TabsContent value="background">
-                <div className="grid w-full max-w-sm items-center gap-2">
-                  <text className="px-2 text-lg font-semibold text-gray-600">
-                    Pick Color for Background
-                  </text>
-                  <ColorPicker color={bgColor} onChange={setBgColor} />
-                </div>
-              </TabsContent>
-            </Tabs>
+            <div className="grid w-full max-w-sm gap-2">
+              <span className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Pick Background Color
+              </span>
+              <ColorPicker
+                color={card.color}
+                onChange={(color) =>
+                  setCard((prev) => ({ ...prev, color: color }))
+                }
+              />
+            </div>
           </TabsContent>
           {/* Icon Tab Content */}
           <TabsContent
             value="icon"
             className="w-full space-y-2 overflow-y-auto p-3"
           >
-            {/* <div className="grid items-center w-full max-w-sm gap-2 ">
-              <Label htmlFor="business-icon">Pick an icon</Label>
+            {/* Pick Icon Size */}
+            <div className="grid w-full max-w-sm items-center gap-2">
+              <Label htmlFor="icon-size">Set Icon Size</Label>
+              <Slider
+                min={12}
+                max={72}
+                step={1}
+                value={[icon.size]}
+                onValueChange={(value) =>
+                  setIcon((prev) => ({ ...prev, size: value[0] }))
+                }
+                className="py-2"
+              />
               <Input
-                id="business-icon"
-                type="text"
-                placeholder="Icon"
-                value={icon}
-                onChange={(e) => setIcon(e.target.value)}
-                disabled
+                id="icon-size"
+                type="number"
+                placeholder="Icon Size"
+                className=""
+                value={icon.size}
+                onChange={(e) => {
+                  setIcon((prev) => ({
+                    ...prev,
+                    size: Number(e.target.value),
+                  }));
+                }}
               />
             </div>
-            <SelectedIcon icon={icon} /> */}
-            {/* Icons */}
-            {/* <IconGrid icon={icon} setIcon={setIcon} /> */}
+
+            {/* Set Icon Color */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <div>
+                  <Button
+                    variant="outline"
+                    className="flex w-fit items-center justify-between p-0"
+                  >
+                    <span className="px-2">Pick Icon Color</span>
+                    <div
+                      className="inline-block aspect-square h-full rounded-r-md"
+                      style={{ backgroundColor: icon.color.hex }}
+                    />
+                  </Button>
+                </div>
+              </PopoverTrigger>
+              <PopoverContent className="w-fit bg-primary-foreground">
+                <ColorPicker
+                  color={icon.color}
+                  onChange={(color) =>
+                    setIcon((prev) => ({ ...prev, color: color }))
+                  }
+                />
+              </PopoverContent>
+            </Popover>
 
             <IconSelector
-              value={icon}
-              onChange={(icon) => setIcon(icon as LucideIconType)}
+              value={icon.icon}
+              onChange={(icon) =>
+                setIcon((prev) => ({ ...prev, icon: icon as LucideIconType }))
+              }
             />
           </TabsContent>
+
+          {/* Space Tab Content */}
+          <TabsContent
+            value="space"
+            className="w-full space-y-2 overflow-y-auto p-3"
+          ></TabsContent>
           {/* Layout Tab Content */}
           <TabsContent
             value="layout"
@@ -367,9 +400,9 @@ export default function Home() {
           className={cn(LayoutVariants({ layout }), "mx-auto my-4 shadow-2xl")}
           // add height and width
           style={{
-            backgroundColor: bgColor.hex,
-            height: cardSize.height.value + cardSize.height.unit,
-            width: cardSize.width.value + cardSize.width.unit,
+            backgroundColor: card.color.hex,
+            height: card.height.value + card.height.unit,
+            width: card.width.value + card.width.unit,
           }}
         >
           {layout !== "text" && (
@@ -379,20 +412,27 @@ export default function Home() {
             //   style={{ color: iconColor.hex }}
             // />
             <LucideIconStatic
-              name={icon as LucideIconType}
-              size={32}
-              style={{ color: iconColor.hex }}
+              name={icon.icon as LucideIconType}
+              size={icon.size}
+              style={{ color: icon.color.hex }}
             />
           )}
           {layout !== "icon" && layout !== "circle" && (
-            <text
-              className={cn(
-                "w-fit text-center text-2xl font-semibold text-gray-600 [text-wrap:balance]",
-              )}
-              style={{ color: textColor.hex }}
-            >
-              {logoName}
-            </text>
+            <>
+              <text
+                className={cn(
+                  "w-fit text-center text-2xl font-semibold text-gray-600 [text-wrap:balance]",
+                )}
+                style={{
+                  color: textState.color.hex,
+                  fontFamily: selectedFont || undefined,
+                  fontSize: textState.size + "px",
+                }}
+              >
+                {textState.text}
+              </text>
+              <FontLoader fonts={[{ font: selectedFont || "" }]} />
+            </>
           )}
         </Card>
         <Credits isMobileViewVisible={false} />
@@ -403,7 +443,7 @@ export default function Home() {
           Wordmark
         </text>
       </div>
-    </>
+    </div>
   );
 
   function Credits({
