@@ -30,16 +30,21 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { ColorPicker, useColor } from "react-color-palette";
-import { IconGrid } from "../components/custom/IconGrid";
-import { SelectedIcon } from "../components/custom/SelectedIcon";
+import { ColorPicker, IColor, useColor } from "react-color-palette";
 import { GoogleFonts } from "./GoogleFonts";
+import { IconSelector } from "@/components/icons/IconSelector";
+import {
+  LucideIcon,
+  LucideIconStatic,
+  LucideIconType,
+} from "@/components/icons";
+import { useAtom } from "jotai";
 
 type UnitType = (typeof Units)[number];
 
 export default function Home() {
   const [logoName, setLogoName] = useState<string>("Wordmark.");
-  const [icon, setIcon] = useState<string>("Boxes");
+  const [icon, setIcon] = useState<LucideIconType>("boxes");
   const [layout, setLayout] = useState<Layouts>("ltr");
   const [bgColor, setBgColor] = useColor("#ffffff");
   const [textColor, setTextColor] = useColor("#000000");
@@ -321,7 +326,7 @@ export default function Home() {
             value="icon"
             className="w-full space-y-2 overflow-y-auto p-3"
           >
-            <div className="grid w-full max-w-sm items-center gap-2 ">
+            {/* <div className="grid items-center w-full max-w-sm gap-2 ">
               <Label htmlFor="business-icon">Pick an icon</Label>
               <Input
                 id="business-icon"
@@ -332,9 +337,14 @@ export default function Home() {
                 disabled
               />
             </div>
-            <SelectedIcon icon={icon} />
+            <SelectedIcon icon={icon} /> */}
             {/* Icons */}
-            <IconGrid icon={icon} setIcon={setIcon} />
+            {/* <IconGrid icon={icon} setIcon={setIcon} /> */}
+
+            <IconSelector
+              value={icon}
+              onChange={(icon) => setIcon(icon as LucideIconType)}
+            />
           </TabsContent>
           {/* Layout Tab Content */}
           <TabsContent
@@ -363,9 +373,14 @@ export default function Home() {
           }}
         >
           {layout !== "text" && (
-            <SelectedIcon
-              icon={icon}
-              onlyIcon
+            // <LucideIcon
+            //   name={icon as LucideIconType}
+            //   size={32}
+            //   style={{ color: iconColor.hex }}
+            // />
+            <LucideIconStatic
+              name={icon as LucideIconType}
+              size={32}
               style={{ color: iconColor.hex }}
             />
           )}
