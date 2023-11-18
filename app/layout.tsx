@@ -2,7 +2,7 @@ import { ThemeProvider } from "@/components/custom/theme-provider";
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import GoogleAnalytics from "./GoogleAnalytics";
+import Analytics from "./GoogleAnalytics";
 import { Providers } from "./Providers";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -53,7 +53,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className + ""}>
-        <GoogleAnalytics />
+        <Analytics />
         <Providers>{children}</Providers>
       </body>
     </html>

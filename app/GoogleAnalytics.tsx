@@ -1,6 +1,8 @@
+"use client";
 import Script from "next/script";
+import { GoogleAnalytics } from "nextjs-google-analytics";
 
-export default function GoogleAnalytics() {
+export default function Analytics() {
   const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
   if (!GA_MEASUREMENT_ID) {
@@ -9,7 +11,8 @@ export default function GoogleAnalytics() {
   }
   return (
     <>
-      <Script
+      <GoogleAnalytics debugMode />
+      {/* <Script
         src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
       />
       <Script id="google-analytics">
@@ -20,7 +23,7 @@ export default function GoogleAnalytics() {
  
           gtag('config', '${GA_MEASUREMENT_ID}');
         `}
-      </Script>
+      </Script> */}
     </>
   );
 }

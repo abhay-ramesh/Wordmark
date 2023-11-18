@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { toPng, toJpeg, toSvg } from "html-to-image";
 import { useAtomValue } from "jotai";
 import { cardAtom } from "@/lib/statemanager";
+import { event } from "nextjs-google-analytics";
 
 import {
   DropdownMenu,
@@ -58,6 +59,11 @@ export function DownloadButton() {
     link.download = `wordmark.${format}`;
     link.href = dataUrl;
     link.click();
+    event("download", {
+      category: "download",
+      label: format,
+      value: 1,
+    });
   };
   return (
     <DropdownMenu>
