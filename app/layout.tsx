@@ -8,9 +8,9 @@ import { Providers } from "./Providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Wordmark - Logo Maker with Google Fonts",
+  title: "Wordmark - Google Fonts Logo Maker",
   description:
-    "Meet Wordmark - Your Logo Maker with Google Fonts. No fuss, just smart logo creation. Pick from Google's font treasure and craft your brand's vibe. Perfect for devs, easy for all entrepreneurs.",
+    "Meet Wordmark - Google Fonts Logo Maker. No fuss, just smart logo creation. Pick from Google's font treasure and craft your brand's vibe. Perfect for devs, easy for all entrepreneurs.",
   applicationName: "Wordmark",
   keywords: [
     "logo maker",
@@ -27,9 +27,9 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://wordmark.abhayramesh.com/",
-    title: "Wordmark - Logo Maker with Google Fonts",
+    title: "Wordmark - Google Fonts Logo Maker",
     description:
-      "Meet Wordmark - Your Logo Maker with Google Fonts. No fuss, just smart logo creation. Pick from Google's font treasure and craft your brand's vibe. Perfect for devs, easy for all entrepreneurs.",
+      "Meet Wordmark - Google Fonts Logo Maker. No fuss, just smart logo creation. Pick from Google's font treasure and craft your brand's vibe. Perfect for devs, easy for all entrepreneurs.",
     images: [
       {
         url: "https://wordmark.abhayramesh.com/Wordmark.png",
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     ],
     siteName: "Wordmark",
   },
-  abstract: "Meet Wordmark - Your Logo Maker with Google Fonts.",
+  abstract: "Meet Wordmark - Google Fonts Logo Maker.",
   themeColor: "#ffffff",
   manifest: "/manifest.json",
 };
