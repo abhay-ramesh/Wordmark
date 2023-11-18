@@ -4,6 +4,7 @@ import { GoogleAnalytics } from "nextjs-google-analytics";
 
 export default function Analytics() {
   const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+  const DEV = process.env.NODE_ENV === "development";
 
   if (!GA_MEASUREMENT_ID) {
     console.warn("No GA_MEASUREMENT_ID found");
@@ -11,7 +12,7 @@ export default function Analytics() {
   }
   return (
     <>
-      <GoogleAnalytics debugMode />
+      <GoogleAnalytics debugMode={DEV} />
       {/* <Script
         src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
       />
