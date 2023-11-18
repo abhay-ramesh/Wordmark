@@ -51,30 +51,28 @@ export function IconTab() {
       {/* Set Icon Color */}
       <div className="grid w-full max-w-sm items-center gap-2">
         <Label htmlFor="icon-color-picker">Set Icon Color</Label>
-        <Popover>
+        {/* <Popover>
           <PopoverTrigger asChild id="icon-color-picker">
             <div>
               <Button
                 variant="outline"
-                className="flex w-fit items-center justify-between p-0"
+                className="flex items-center justify-between p-0 w-fit"
               >
                 <span className="px-2">Pick Icon Color</span>
                 <div
-                  className="inline-block aspect-square h-full rounded-r-md"
+                  className="inline-block h-full aspect-square rounded-r-md"
                   style={{ backgroundColor: icon.color.hex }}
                 />
               </Button>
             </div>
           </PopoverTrigger>
-          <PopoverContent className="w-fit bg-primary-foreground">
-            <ColorPicker
-              color={icon.color}
-              onChange={(color) =>
-                setIcon((prev) => ({ ...prev, color: color }))
-              }
-            />
-          </PopoverContent>
-        </Popover>
+          <PopoverContent className="w-fit bg-primary-foreground"> */}
+        <ColorPicker
+          color={icon.color}
+          onChange={(color) => setIcon((prev) => ({ ...prev, color: color }))}
+        />
+        {/* </PopoverContent>
+        </Popover> */}
       </div>
 
       {/* Pick Icon */}
