@@ -18,10 +18,12 @@ import {
 import { Input } from "../ui/input";
 
 export function IconSelector({
+  id,
   value,
   onChange,
   className,
 }: {
+  id?: string;
   value: string | null | undefined;
   onChange: (value: string) => void;
   className?: string;
@@ -54,7 +56,7 @@ export function IconSelector({
   };
 
   return (
-    <div className="h-full w-full gap-4">
+    <div id={id} className="h-full w-full gap-4">
       <div className="relative flex items-center justify-between">
         <Input
           type="text"

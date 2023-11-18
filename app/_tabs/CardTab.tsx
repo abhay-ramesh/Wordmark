@@ -73,8 +73,9 @@ export function CardTab() {
   return (
     <TabsContent value="card" className="w-full space-y-5 overflow-y-auto p-3">
       <div className="grid w-full max-w-sm items-center gap-2">
-        <Label>Set Background Height</Label>
+        <Label htmlFor="card-height-value">Set Background Height</Label>
         <Slider
+          id="card-height-value"
           min={100}
           max={500}
           value={[card.height.value]}
@@ -84,7 +85,7 @@ export function CardTab() {
         />
         <div className="flex space-x-2">
           <Input
-            id="business-height-value"
+            id="card-height-value"
             type="number"
             placeholder="Height"
             className=""
@@ -116,8 +117,9 @@ export function CardTab() {
         </div>
       </div>
       <div className="grid w-full max-w-sm items-center gap-2">
-        <Label>Set Background Width</Label>
+        <Label htmlFor="card-width-value">Set Background Width</Label>
         <Slider
+          id="card-width-value"
           min={100}
           max={500}
           step={1}
@@ -127,7 +129,7 @@ export function CardTab() {
         />
         <div className="flex space-x-2">
           <Input
-            id="business-width-value"
+            id="card-width-value"
             type="number"
             placeholder="Width"
             className=""
@@ -159,9 +161,7 @@ export function CardTab() {
         </div>
       </div>
       <div className="grid w-full max-w-sm gap-2">
-        <span className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-          Pick Background Color
-        </span>
+        <Label htmlFor="card-color-picker">Set Background Color</Label>
         <ColorPicker
           color={card.color}
           onChange={(color) => setCard((prev) => ({ ...prev, color: color }))}

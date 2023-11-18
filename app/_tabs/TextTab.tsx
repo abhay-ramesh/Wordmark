@@ -36,6 +36,7 @@ export function TextTab() {
       <div className="grid w-full max-w-sm items-center gap-2">
         <Label htmlFor="font-size">Set Font Size</Label>
         <Slider
+          id="font-size"
           min={12}
           max={72}
           step={1}
@@ -43,7 +44,7 @@ export function TextTab() {
           onValueChange={(value) =>
             setTextState((prev) => ({ ...prev, size: value[0] }))
           }
-          className="py-2"
+          className="py-4"
         />
         <Input
           id="font-size"
@@ -61,30 +62,33 @@ export function TextTab() {
       </div>
 
       {/* Pick Font Color */}
-      <Popover>
-        <PopoverTrigger asChild>
-          <div>
-            <Button
-              variant="outline"
-              className="flex w-fit items-center justify-between p-0"
-            >
-              <span className="px-2">Pick Font Color</span>
-              <div
-                className="inline-block aspect-square h-full rounded-r-md"
-                style={{ backgroundColor: textState.color.hex }}
-              />
-            </Button>
-          </div>
-        </PopoverTrigger>
-        <PopoverContent className="w-fit bg-primary-foreground">
-          <ColorPicker
-            color={textState.color}
-            onChange={(color) =>
-              setTextState((prev) => ({ ...prev, color: color }))
-            }
-          />
-        </PopoverContent>
-      </Popover>
+      <div className="grid w-full max-w-sm items-center gap-2">
+        <Label htmlFor="font-color-picker">Set Font Color</Label>
+        <Popover>
+          <PopoverTrigger asChild>
+            <div>
+              <Button
+                variant="outline"
+                className="flex w-fit items-center justify-between p-0"
+              >
+                <span className="px-2">Pick Font Color</span>
+                <div
+                  className="inline-block aspect-square h-full rounded-r-md"
+                  style={{ backgroundColor: textState.color.hex }}
+                />
+              </Button>
+            </div>
+          </PopoverTrigger>
+          <PopoverContent className="w-fit bg-primary-foreground">
+            <ColorPicker
+              color={textState.color}
+              onChange={(color) =>
+                setTextState((prev) => ({ ...prev, color: color }))
+              }
+            />
+          </PopoverContent>
+        </Popover>
+      </div>
 
       {/* Pick Font */}
       <FontSelector />

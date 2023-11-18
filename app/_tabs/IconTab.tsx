@@ -18,11 +18,12 @@ import { Button } from "@/components/ui/button";
 export function IconTab() {
   const [icon, setIcon] = useAtom(iconAtom);
   return (
-    <TabsContent value="icon" className="w-full space-y-2 overflow-y-auto p-3">
+    <TabsContent value="icon" className="w-full space-y-4 overflow-y-auto p-3">
       {/* Pick Icon Size */}
       <div className="grid w-full max-w-sm items-center gap-2">
         <Label htmlFor="icon-size">Set Icon Size</Label>
         <Slider
+          id="icon-size"
           min={12}
           max={72}
           step={1}
@@ -30,7 +31,7 @@ export function IconTab() {
           onValueChange={(value) =>
             setIcon((prev) => ({ ...prev, size: value[0] }))
           }
-          className="py-2"
+          className="py-4"
         />
         <Input
           id="icon-size"
@@ -48,35 +49,45 @@ export function IconTab() {
       </div>
 
       {/* Set Icon Color */}
-      <Popover>
-        <PopoverTrigger asChild>
-          <div>
-            <Button
-              variant="outline"
-              className="flex w-fit items-center justify-between p-0"
-            >
-              <span className="px-2">Pick Icon Color</span>
-              <div
-                className="inline-block aspect-square h-full rounded-r-md"
-                style={{ backgroundColor: icon.color.hex }}
-              />
-            </Button>
-          </div>
-        </PopoverTrigger>
-        <PopoverContent className="w-fit bg-primary-foreground">
-          <ColorPicker
-            color={icon.color}
-            onChange={(color) => setIcon((prev) => ({ ...prev, color: color }))}
-          />
-        </PopoverContent>
-      </Popover>
+      <div className="grid w-full max-w-sm items-center gap-2">
+        <Label htmlFor="icon-color-picker">Set Icon Color</Label>
+        <Popover>
+          <PopoverTrigger asChild id="icon-color-picker">
+            <div>
+              <Button
+                variant="outline"
+                className="flex w-fit items-center justify-between p-0"
+              >
+                <span className="px-2">Pick Icon Color</span>
+                <div
+                  className="inline-block aspect-square h-full rounded-r-md"
+                  style={{ backgroundColor: icon.color.hex }}
+                />
+              </Button>
+            </div>
+          </PopoverTrigger>
+          <PopoverContent className="w-fit bg-primary-foreground">
+            <ColorPicker
+              color={icon.color}
+              onChange={(color) =>
+                setIcon((prev) => ({ ...prev, color: color }))
+              }
+            />
+          </PopoverContent>
+        </Popover>
+      </div>
 
-      <IconSelector
-        value={icon.icon}
-        onChange={(icon) =>
-          setIcon((prev) => ({ ...prev, icon: icon as LucideIconType }))
-        }
-      />
+      {/* Pick Icon */}
+      <div className="grid w-full max-w-sm items-center gap-2">
+        <Label htmlFor="icon-picker">Pick Icon</Label>
+        <IconSelector
+          id="icon-picker"
+          value={icon.icon}
+          onChange={(icon) =>
+            setIcon((prev) => ({ ...prev, icon: icon as LucideIconType }))
+          }
+        />
+      </div>
     </TabsContent>
   );
 }
