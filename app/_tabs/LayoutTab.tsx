@@ -9,17 +9,20 @@ export function LayoutTab() {
   const [layout, setLayout] = useAtom(layoutAtom);
   return (
     <TabsContent
+      id="layout"
       value="layout"
-      className="w-full space-y-2 overflow-y-auto p-3"
+      className="w-full overflow-y-auto p-3"
     >
-      {LAYOUT_TYPES.map((layoutType) => (
-        <SelectableLayoutCard
-          key={layoutType}
-          layout={layoutType}
-          isSelected={layoutType === layout}
-          onClick={() => setLayout(layoutType)}
-        />
-      ))}
+      <div className="grid w-full grid-cols-2 gap-2 sm:grid-cols-1">
+        {LAYOUT_TYPES.map((layoutType) => (
+          <SelectableLayoutCard
+            key={layoutType}
+            layout={layoutType}
+            isSelected={layoutType === layout}
+            onClick={() => setLayout(layoutType)}
+          />
+        ))}
+      </div>
     </TabsContent>
   );
 }

@@ -7,7 +7,7 @@ import { cva } from "class-variance-authority";
 export type Layouts = (typeof LAYOUT_TYPES)[number];
 
 export const LayoutVariants = cva(
-  "flex justify-center items-center h-40 p-3 text-gray-600",
+  "flex justify-center items-center p-3 text-gray-600",
   {
     variants: {
       layout: {
@@ -15,9 +15,9 @@ export const LayoutVariants = cva(
         rtl: "flex-row-reverse w-full space-x-4 space-x-reverse",
         ttd: "flex-col w-full space-y-2",
         dtt: "flex-col-reverse w-full space-y-2 space-y-reverse",
-        icon: "mx-auto border-dashed aspect-square",
         text: "w-full",
-        circle: "mx-auto border-dashed aspect-square rounded-full",
+        icon: "mx-auto border-dashed aspect-square w-fit",
+        circle: "mx-auto border-dashed aspect-square rounded-full w-fit",
       },
       isSelected: {
         true: "ring-2 ring-blue-500 bg-blue-400 text-white",
@@ -48,11 +48,14 @@ export const SelectableLayoutCard = ({
     >
       {layout !== "text" &&
         (layout !== "circle" ? (
+          // Square
           <div className="aspect-square h-16 w-16 rounded-md bg-muted" />
         ) : (
+          // Circle
           <div className="aspect-square h-16 w-16 rounded-full bg-muted" />
         ))}
       {layout !== "icon" && layout !== "circle" ? (
+        // Rectangle
         <div className="h-10 w-28 rounded-md bg-muted" />
       ) : null}
     </Card>
