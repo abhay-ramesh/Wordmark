@@ -1,6 +1,5 @@
 "use client";
-import { useEffect, useMemo, useRef, useState } from "react";
-import GoogleFontLoader from "react-google-font-loader";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -14,8 +13,8 @@ import { X } from "lucide-react"; // Assuming you have Lucide icons for the clos
 import { FontItem, FontLoader, fontList } from "@/lib/fonts";
 import { Label } from "@/components/ui/label";
 import { useAtom, useAtomValue } from "jotai";
-import { fontAtom, logoNameAtom } from "@/lib/statemanager";
 import { Inter } from "next/font/google";
+import { fontAtom, textAtom } from "@/lib/statemanager";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -133,12 +132,12 @@ function FontDisplay({
   onChange,
 }: {
   font: FontItem;
-  selectedFont: string | undefined;
+  selectedFont: FontItem | undefined;
   clearSelectedFont: () => void;
-  setSelectedFont: (font: string) => void;
-  onChange: (font: string) => void;
+  setSelectedFont: (font: FontItem) => void;
+  onChange: (font: FontItem) => void;
 }) {
-  const logoName = useAtomValue(logoNameAtom);
+  const { text: logoName } = useAtomValue(textAtom);
   return (
     <Tooltip key={font.family}>
       <TooltipTrigger asChild>
@@ -147,16 +146,16 @@ function FontDisplay({
             "group relative mx-auto h-16 w-full items-center justify-center rounded-md text-2xl font-medium",
             {
               "bg-gray-200 text-gray-800 hover:bg-gray-200/90":
-                font.family === selectedFont,
+                font.family === selectedFont?.family,
               "border bg-white text-primary hover:bg-gray-200":
-                font.family !== selectedFont,
+                font.family !== selectedFont?.family,
             },
           )}
           variant={"ghostV2"}
           onClick={() => {
-            if (font.family !== selectedFont) {
-              setSelectedFont(font.family);
-              onChange(font.family); // Notify the parent component of the change
+            if (font.family !== selectedFont?.family) {
+              setSelectedFont(font);
+              onChange(font); // Notify the parent component of the change
             } else {
               clearSelectedFont();
             }

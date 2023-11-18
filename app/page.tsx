@@ -2,7 +2,6 @@
 
 import {
   LayoutVariants,
-  Layouts,
   SelectableLayoutCard,
 } from "@/components/custom/SelectableLayoutCard";
 import { Card } from "@/components/ui/card";
@@ -17,35 +16,25 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { LAYOUT_TYPES, Units } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { Boxes } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
-import {
-  ColorPicker,
-  ColorService,
-  IColor,
-  useColor,
-} from "react-color-palette";
+import { useEffect, useState } from "react";
+import { ColorPicker } from "react-color-palette";
 import { FontSelector } from "../components/custom/FontSelector";
 import { IconSelector } from "@/components/icons/IconSelector";
-import {
-  LucideIcon,
-  LucideIconStatic,
-  LucideIconType,
-} from "@/components/icons";
+import { LucideIconStatic, LucideIconType } from "@/components/icons";
 import { useAtom, useAtomValue } from "jotai";
 import {
   cardAtom,
   fontAtom,
   iconAtom,
-  logoNameAtom,
+  layoutAtom,
   textAtom,
 } from "@/lib/statemanager";
 import { MenuList } from "./MenuList";
-import GoogleFontLoader from "react-google-font-loader";
 import {
   Popover,
   PopoverContent,
@@ -59,8 +48,7 @@ type UnitType = (typeof Units)[number];
 export default function Home() {
   const selectedFont = useAtomValue(fontAtom);
   const [icon, setIcon] = useAtom(iconAtom);
-  const [layout, setLayout] = useState<Layouts>("ltr");
-
+  const [layout, setLayout] = useAtom(layoutAtom);
   const [card, setCard] = useAtom(cardAtom);
   const [lockDimensions, setLockDimensions] = useState(false);
 
@@ -80,6 +68,7 @@ export default function Home() {
         updateCardDimensions(170, 300);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Function to update card dimensions
@@ -105,6 +94,15 @@ export default function Home() {
       );
     }
   };
+
+  useEffect(() => {
+    if (layout === "icon" || layout === "circle") {
+      updateCardDimensions(card.height.value, card.height.value);
+    } else {
+      updateCardDimensions(card.height.value, card.width.value);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [layout]);
 
   return (
     <div className="flex min-h-screen flex-col-reverse justify-end space-y-2 space-y-reverse bg-muted p-4 md:h-screen md:flex-row md:space-x-2 md:space-y-0">
@@ -210,7 +208,7 @@ export default function Home() {
               <Slider
                 min={100}
                 max={500}
-                defaultValue={[card.height.value]}
+                value={[card.height.value]}
                 step={1}
                 onValueChange={(value) =>
                   handleDimensionChange("height", value[0])
@@ -229,7 +227,7 @@ export default function Home() {
                   }
                 />
                 <Select
-                  defaultValue={card.height.unit}
+                  value={card.height.unit}
                   onValueChange={(value) =>
                     setCard((prev) => ({
                       ...prev,
@@ -255,8 +253,8 @@ export default function Home() {
               <Slider
                 min={100}
                 max={500}
-                defaultValue={[card.width.value]}
                 step={1}
+                value={[card.width.value]}
                 onValueChange={(value) =>
                   handleDimensionChange("width", value[0])
                 }
@@ -274,7 +272,7 @@ export default function Home() {
                   }
                 />
                 <Select
-                  defaultValue={card.width.unit}
+                  value={card.width.unit}
                   onValueChange={(value) =>
                     setCard((prev) => ({
                       ...prev,
@@ -425,13 +423,13 @@ export default function Home() {
                 )}
                 style={{
                   color: textState.color.hex,
-                  fontFamily: selectedFont || undefined,
+                  fontFamily: selectedFont?.family || undefined,
                   fontSize: textState.size + "px",
                 }}
               >
                 {textState.text}
               </text>
-              <FontLoader fonts={[{ font: selectedFont || "" }]} />
+              <FontLoader fonts={[{ font: selectedFont?.family || "" }]} />
             </>
           )}
         </Card>

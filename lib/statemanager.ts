@@ -6,21 +6,47 @@ import { FontItem } from "./fonts";
 import { IColor } from "react-color-palette";
 import { Units } from "./constants";
 
-// export const logoNameAtom = atomWithStorage<string>("logoName", "Wordmark.");
-export const logoNameAtom = atom("Wordmark.");
-// export const iconAtom = atomWithStorage<LucideIconType>("icon", "boxes");
-// export const iconAtom = atom("boxes");
+export const layoutAtom = atom<Layouts>("ltr");
 
-// export const layoutAtom = atomWithStorage<Layouts>("layout", "ltr");
-export const layoutAtom = atom("ltr");
+export const textWithFontAtom = atom(
+  (get) => {
+    const text = get(textAtom);
+    const font = get(fontAtom);
 
-export const fontAtom = atom<string | undefined>(undefined);
+    return {
+      text,
+      font,
+    };
+  },
+  (set) => {
+    const text = set(textAtom);
+    const font = set(fontAtom);
+
+    return {
+      text,
+      font,
+    };
+  },
+);
+
+export const fontAtom = atom<FontItem | undefined>({
+  family: "Inter",
+  variants: ["regular"],
+  subsets: ["latin"],
+  version: "3.19",
+  lastModified: "2021-04-27",
+  files: {
+    regular: "http://fonts.gstatic.com/s/inter/v3/3qjtzSFDUh2N3qznfJw.ttf",
+  },
+  category: "sans-serif",
+  kind: "webfonts#webfont",
+  menu: "serif",
+});
 
 export const textAtom = atom<{
   text: string;
   color: IColor;
   size: number;
-  font: Partial<FontItem>;
 }>({
   text: "Wordmark.",
   color: {
@@ -39,19 +65,6 @@ export const textAtom = atom<{
     },
   },
   size: 24,
-  font: {
-    family: "Inter",
-    variants: ["regular"],
-    subsets: ["latin"],
-    version: "3.19",
-    lastModified: "2021-04-27",
-    files: {
-      regular: "http://fonts.gstatic.com/s/inter/v3/3qjtzSFDUh2N3qznfJw.ttf",
-    },
-    category: "sans-serif",
-    kind: "webfonts#webfont",
-    menu: "serif",
-  },
 });
 
 export const iconAtom = atom<{
