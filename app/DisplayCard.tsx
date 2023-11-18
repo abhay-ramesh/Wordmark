@@ -25,6 +25,9 @@ export function DisplayCard() {
       className={cn(
         LayoutVariants({ layout }),
         "m-0 h-fit w-fit max-w-full rounded-md bg-transparent p-0 shadow-2xl",
+        {
+          "rounded-full": layout === "circle",
+        },
       )}
       style={{
         backgroundColor: card.color.hex,
