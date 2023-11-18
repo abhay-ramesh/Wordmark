@@ -3,9 +3,9 @@ import { MetadataRoute } from "next";
 export default function manifest(): MetadataRoute.Manifest {
   return {
     short_name: "Wordmark",
-    name: "Wordmark - Logo Maker with Google Fonts",
+    name: "Wordmark - Google Fonts Logo Maker",
     description:
-      "Meet Wordmark - Your Logo Maker with Google Fonts. No fuss, just smart logo creation. Pick from Google's font treasure and craft your brand's vibe. Perfect for devs, easy for all entrepreneurs.",
+      "Meet Wordmark - Google Fonts Logo Maker. No fuss, just smart logo creation. Pick from Google's font treasure and craft your brand's vibe. Perfect for devs, easy for all entrepreneurs.",
     icons: [
       {
         src: "/icons/wordmark-icon-256x256.png",
