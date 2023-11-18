@@ -44,10 +44,7 @@ export const MenuList = () => {
   return (
     <TabsList className="flex h-fit w-full justify-start overflow-x-auto rounded-r-none md:h-full md:w-fit md:flex-col md:overflow-x-visible">
       {menuItems.map((item, id) => (
-        <div
-          key={id}
-          className="flex h-fit w-full justify-start overflow-x-auto rounded-r-none md:h-full md:w-fit md:flex-col md:overflow-x-visible"
-        >
+        <div key={id} className="w-full">
           <TabsTrigger
             className="flex aspect-square h-20 w-full flex-col items-center justify-center space-y-2 p-2 text-gray-600 md:w-20"
             value={item.name}
