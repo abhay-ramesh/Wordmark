@@ -165,7 +165,7 @@ function FontDisplay({
           {logoName || font.family}
           <div
             className={cn(
-              "absolute bottom-0 right-0 z-20 cursor-pointer rounded-full p-1 text-xs text-gray-400 group-hover:text-gray-600",
+              "absolute bottom-0 right-0 z-10 cursor-pointer rounded-full p-1 text-xs text-gray-400 group-hover:text-gray-600",
               inter.className,
             )}
             style={{ fontFamily: undefined }}
