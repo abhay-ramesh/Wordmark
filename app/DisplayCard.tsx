@@ -12,6 +12,7 @@ import {
   textAtom,
 } from "@/lib/statemanager";
 import { FontLoader } from "@/lib/fonts";
+import { useEffect, useState } from "react";
 
 export function DisplayCard() {
   const selectedFont = useAtomValue(fontAtom);
@@ -19,6 +20,25 @@ export function DisplayCard() {
   const layout = useAtomValue(layoutAtom);
   const card = useAtomValue(cardAtom);
   const textState = useAtomValue(textAtom);
+
+  const [fontCSS, setFontCSS] = useState<string | null>(null);
+
+  const fetchFont = async (url: string) => {
+    const res = await fetch(url);
+    const fontCss = await res.text();
+    return fontCss;
+  };
+
+  useEffect(() => {
+    if (selectedFont?.menu) {
+      fetchFont(
+        "https://fonts.googleapis.com/css?family=" +
+          selectedFont.family.replace(" ", "+"),
+      ).then((fontCss) => {
+        setFontCSS(fontCss);
+      });
+    }
+  }, [selectedFont]);
 
   return (
     <div
@@ -39,8 +59,9 @@ export function DisplayCard() {
           LayoutVariants({ layout }),
           "m-0 h-full border-none shadow-none",
         )}
-        // add height and width
         style={{
+          font: selectedFont?.family || undefined,
+          fontFamily: selectedFont?.family || undefined,
           backgroundColor: card.color.hex,
           height: card.height.value + card.height.unit,
           width: card.width.value + card.width.unit,
@@ -75,6 +96,7 @@ export function DisplayCard() {
             <FontLoader fonts={[{ font: selectedFont?.family || "" }]} />
           </>
         )}
+        {selectedFont?.family && <style>{fontCSS}</style>}
       </Card>
     </div>
   );
