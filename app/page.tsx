@@ -6,13 +6,14 @@ import { Credits } from "./Credits";
 import { DisplayCard } from "./DisplayCard";
 import { CardTab, IconTab, LayoutTab, MenuList, TextTab } from "./_tabs";
 import { DownloadButton } from "./DownloadButton";
+import { FloatButtons } from "./FloatButtons";
 
 export type UnitType = (typeof Units)[number];
 
 export default function Home() {
   return (
     <div className="relative flex min-h-screen flex-col-reverse justify-end space-y-2 space-y-reverse bg-muted p-4 md:h-screen md:flex-row md:space-x-2 md:space-y-0">
-      <DownloadButton />
+      <FloatButtons />
       <Credits isMobileViewVisible />
       <aside className="flex h-2/3 w-full flex-col md:h-full md:max-h-full md:w-2/5">
         <div className="hidden h-20 w-full flex-none items-center justify-center space-x-2 rounded-lg border bg-primary-foreground text-center text-gray-600 md:flex">
