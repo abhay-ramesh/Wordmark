@@ -25,10 +25,12 @@ export function TextTab() {
           id="business-name"
           type="text"
           placeholder="Your Business Name"
+          className="border-2 border-blue-500"
           value={textState.text}
           onChange={(e) =>
             setTextState((prev) => ({ ...prev, text: e.target.value }))
           }
+          autoFocus
         />
       </div>
 

@@ -3,7 +3,7 @@ import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toPng, toJpeg, toSvg } from "html-to-image";
 import { useAtomValue } from "jotai";
-import { cardAtom } from "@/lib/statemanager";
+import { cardAtom, layoutAtom } from "@/lib/statemanager";
 import { event } from "nextjs-google-analytics";
 
 import {
@@ -45,7 +45,6 @@ export function DownloadButton() {
     dataUrl = await toImage(format, node, {
       cacheBust: true,
       pixelRatio: 6,
-      backgroundColor: card.color.hex,
     });
 
     const link = document.createElement("a");
@@ -69,7 +68,11 @@ export function DownloadButton() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="action" className="h-fit w-fit rounded-full p-4">
+        <Button
+          variant="action"
+          className="h-fit w-fit rounded-full p-4"
+          name="Download"
+        >
           <Download size={24} />
         </Button>
       </DropdownMenuTrigger>

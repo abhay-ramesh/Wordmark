@@ -3,7 +3,7 @@ import { LayoutVariants } from "@/components/custom/SelectableLayoutCard";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { LucideIconStatic, LucideIconType } from "@/components/icons";
-import { useAtomValue } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import {
   cardAtom,
   fontAtom,
@@ -19,7 +19,7 @@ export function DisplayCard() {
   const icon = useAtomValue(iconAtom);
   const layout = useAtomValue(layoutAtom);
   const card = useAtomValue(cardAtom);
-  const textState = useAtomValue(textAtom);
+  const [textState, setTextState] = useAtom(textAtom);
 
   const [fontCSS, setFontCSS] = useState<string | null>(null);
 
@@ -50,7 +50,7 @@ export function DisplayCard() {
         },
       )}
       style={{
-        backgroundColor: card.color.hex,
+        backgroundColor: layout !== "circle" ? card.color.hex : "transparent",
       }}
     >
       <Card
@@ -81,7 +81,7 @@ export function DisplayCard() {
         )}
         {layout !== "icon" && layout !== "circle" && (
           <>
-            <text
+            <div
               className={cn(
                 "w-fit text-center text-2xl font-semibold text-gray-600 [text-wrap:balance]",
               )}
@@ -90,9 +90,17 @@ export function DisplayCard() {
                 fontFamily: selectedFont?.family || undefined,
                 fontSize: textState.size + "px",
               }}
+              onBlur={(e) => {
+                setTextState((prev) => ({
+                  ...prev,
+                  text: e.currentTarget.textContent || "",
+                }));
+              }}
+              contentEditable={true}
+              suppressContentEditableWarning={true}
             >
               {textState.text}
-            </text>
+            </div>
             <FontLoader fonts={[{ font: selectedFont?.family || "" }]} />
           </>
         )}
