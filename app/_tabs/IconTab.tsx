@@ -5,7 +5,7 @@ import { Slider } from "@/components/ui/slider";
 import { TabsContent } from "@/components/ui/tabs";
 import { ColorPicker } from "react-color-palette";
 import { IconSelector } from "@/components/icons/IconSelector";
-import { LucideIconType } from "@/components/icons";
+import { LucideIconType } from "@/components/icons/LucideIcons";
 import { useAtom } from "jotai";
 import { iconAtom } from "@/lib/statemanager";
 import {

@@ -1,5 +1,5 @@
 import { Layouts } from "@/components/custom/SelectableLayoutCard";
-import { LucideIconType } from "@/components/icons";
+import { LucideIconType } from "@/components/icons/LucideIcons";
 import { atom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { FontItem } from "./fonts";
@@ -71,6 +71,7 @@ export const iconAtom = atom<{
   icon: LucideIconType;
   color: IColor;
   size: number;
+  stroke: number;
 }>({
   icon: "boxes",
   color: {
@@ -89,6 +90,7 @@ export const iconAtom = atom<{
     },
   },
   size: 32,
+  stroke: 2,
 });
 
 type UnitType = (typeof Units)[number];

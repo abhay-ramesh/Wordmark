@@ -2,7 +2,10 @@
 import { LayoutVariants } from "@/components/custom/SelectableLayoutCard";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { LucideIconStatic, LucideIconType } from "@/components/icons";
+import {
+  LucideIconStatic,
+  LucideIconType,
+} from "@/components/icons/LucideIcons";
 import { useAtom, useAtomValue } from "jotai";
 import {
   cardAtom,

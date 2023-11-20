@@ -3,8 +3,8 @@ import {
   LucideIcon,
   LucideIconList,
   LucideIconStatic,
-} from "@/components/icons";
-import { LucideIconType } from "@/components/icons";
+} from "@/components/icons/LucideIcons";
+import { LucideIconType } from "@/components/icons/LucideIcons";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { X } from "lucide-react";
