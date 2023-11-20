@@ -61,6 +61,9 @@ export function DownloadButton() {
       category: "download",
       format: format,
     });
+    setTimeout(() => {
+      node.classList.add("delayed-survey");
+    }, 1000);
   };
 
   return (
