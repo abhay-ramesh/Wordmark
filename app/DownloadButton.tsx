@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Options } from "html-to-image/lib/types";
+import posthog from "posthog-js";
 
 const formats = ["png", "svg", "jpeg"] as const;
 
@@ -55,6 +56,10 @@ export function DownloadButton() {
       category: "download",
       label: format,
       value: 1,
+    });
+    posthog.capture("download", {
+      category: "download",
+      format: format,
     });
   };
 

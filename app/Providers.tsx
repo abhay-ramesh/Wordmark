@@ -4,7 +4,10 @@ import { Provider as JotaiProvider } from "jotai";
 import posthog from "posthog-js";
 import { PostHogProvider } from "posthog-js/react";
 
-if (process.env.NEXT_PUBLIC_ENABLE_POSTHOG === "true") {
+if (
+  process.env.NEXT_PUBLIC_ENABLE_POSTHOG === "true" ||
+  process.env.NODE_ENV === "production"
+) {
   if (typeof window !== "undefined") {
     posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY ?? "", {
       api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
