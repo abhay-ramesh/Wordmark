@@ -23,8 +23,8 @@ Say goodbye to logo design headaches! Wordmark is here to simplify the process a
 Ready to dive in? Go straight to our website and start crafting your logo today: [wordmark.abhayramesh.com](https://wordmark.abhayramesh.com/)
 
 <div style="display:flex;">
-  <img src="/public/Wordmark-Light.png" alt="Image 1" style="width:50%; margin-right:5px;">
-  <img src="/public/Wordmark-Dark.png" alt="Image 2" style="width:50%;">
+  <img src="public/Wordmark-Light.png" alt="Image 1" style="width:50%; margin-right:5px;">
+  <img src="public/Wordmark-Dark.png" alt="Image 2" style="width:50%;">
 </div>
 
 ## Join the Journey
