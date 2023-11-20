@@ -34,6 +34,16 @@ We're all about the entrepreneurial spirit. If you're as passionate as we are, j
 
 Have fellow entrepreneurs in your circle? Let them know about Wordmark. It's the secret ingredient to a standout brand identity.
 
+## Star History
+
+<a href="https://star-history.com/#abhay-ramesh/Wordmark&Timeline">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=abhay-ramesh/Wordmark&type=Timeline&theme=dark" />
+    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=abhay-ramesh/Wordmark&type=Timeline" />
+    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=abhay-ramesh/Wordmark&type=Timeline" />
+  </picture>
+</a>
+
 ## Licensing
 
 Wordmark operates under the [Entrepreneur's License](LICENSE.md). Feel free to customize, adapt, and thrive with it.
@@ -41,7 +51,3 @@ Wordmark operates under the [Entrepreneur's License](LICENSE.md). Feel free to c
 ---
 
 Crafted with 💡 for entrepreneurs by the Wordmark Team.
-
-## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=abhay-ramesh/Wordmark&type=Timeline)](https://star-history.com/#abhay-ramesh/Wordmark&Timeline)
