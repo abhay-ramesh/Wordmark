@@ -41,3 +41,7 @@ Wordmark operates under the [Entrepreneur's License](LICENSE.md). Feel free to c
 ---
 
 Crafted with 💡 for entrepreneurs by the Wordmark Team.
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=abhay-ramesh/Wordmark&type=Timeline)](https://star-history.com/#abhay-ramesh/Wordmark&Timeline)
