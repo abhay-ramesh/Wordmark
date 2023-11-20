@@ -5,7 +5,7 @@ import posthog from "posthog-js";
 import { PostHogProvider } from "posthog-js/react";
 
 if (
-  process.env.NEXT_PUBLIC_ENABLE_POSTHOG === "true" ||
+  process.env.NEXT_PUBLIC_POSTHOG_ENABLED === "true" ||
   process.env.NODE_ENV === "production"
 ) {
   if (typeof window !== "undefined") {
