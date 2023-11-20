@@ -87,10 +87,9 @@ export function IconSelector({
                     className={cn(
                       "mx-auto items-center justify-center rounded-full py-3 text-base font-medium",
                       {
-                        "bg-blue-600 text-white hover:bg-blue-600/90":
+                        "bg-blue-600 text-white hover:bg-blue-600/90 hover:text-white/90":
                           icon === selectedIcon,
-                        "border bg-white text-primary hover:bg-gray-200":
-                          icon !== selectedIcon,
+                        "0": icon !== selectedIcon,
                       },
                     )}
                     variant={"ghostV2"}

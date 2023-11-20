@@ -16,11 +16,11 @@ export const LayoutVariants = cva(
         ttd: "flex-col w-full space-y-2",
         dtt: "flex-col-reverse w-full space-y-2 space-y-reverse",
         text: "w-full",
-        icon: "mx-auto border-dashed aspect-square w-fit",
-        circle: "mx-auto border-dashed aspect-square rounded-full w-fit",
+        icon: "mx-auto aspect-square w-fit",
+        circle: "mx-auto aspect-square rounded-full w-fit",
       },
       isSelected: {
-        true: "ring-2 ring-blue-500 bg-blue-400 text-white",
+        true: "border-2 border-blue-500 border-dashed text-white",
         false: "",
       },
     },
@@ -49,14 +49,18 @@ export const SelectableLayoutCard = ({
       {layout !== "text" &&
         (layout !== "circle" ? (
           // Square
-          <div className="aspect-square h-16 w-16 rounded-md bg-muted" />
+          <div
+            className={cn("aspect-square h-16 w-16 rounded-md bg-muted", {})}
+          />
         ) : (
           // Circle
-          <div className="aspect-square h-16 w-16 rounded-full bg-muted" />
+          <div
+            className={cn("aspect-square h-16 w-16 rounded-full bg-muted", {})}
+          />
         ))}
       {layout !== "icon" && layout !== "circle" ? (
         // Rectangle
-        <div className="h-10 w-28 rounded-md bg-muted" />
+        <div className={cn("h-10 w-28 rounded-md bg-muted", {})} />
       ) : null}
     </Card>
   );

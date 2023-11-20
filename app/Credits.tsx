@@ -12,10 +12,9 @@ export function Credits({
   return (
     <div
       className={cn(
-        "mx-auto flex w-fit flex-col items-center justify-center gap-4 space-y-4 px-8 text-center text-xs text-slate-800 [text-wrap:balance] sm:py-0",
+        "mx-auto flex w-fit flex-col items-center justify-center gap-4 space-y-4 px-8 text-center text-xs  [text-wrap:balance] sm:py-0",
         {
-          "block rounded-md border bg-gray-800 py-2 text-slate-100 md:hidden":
-            isMobileViewVisible,
+          "block rounded-md border py-4 md:hidden": isMobileViewVisible,
           "absolute bottom-4 hidden md:block": !isMobileViewVisible,
         },
         className,

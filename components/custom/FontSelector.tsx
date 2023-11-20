@@ -65,7 +65,7 @@ export function FontSelector({ className }: FontSelectorProps) {
       <Label htmlFor="font-selector" className="">
         Select Font
       </Label>
-      <div className="relative flex items-center justify-between">
+      <div className="relative flex items-center justify-between pb-4 pt-2">
         <Input
           id="font-selector"
           type="text"
@@ -114,7 +114,7 @@ export function FontSelector({ className }: FontSelectorProps) {
       )}
       {fontsToShow < filteredFonts.length && (
         <Button
-          className="mt-4 w-full cursor-pointer rounded-md bg-blue-500 p-2 text-center text-white"
+          className="my-4 w-full cursor-pointer rounded-md bg-blue-500 p-2 text-center text-white"
           onClick={showMoreFonts}
         >
           Load More
@@ -145,10 +145,8 @@ function FontDisplay({
           className={cn(
             "group relative mx-auto h-16 w-full items-center justify-center rounded-md text-2xl font-medium",
             {
-              "bg-gray-200 text-gray-800 hover:bg-gray-200/90":
+              "bg-blue-600 text-white hover:bg-blue-600/90 hover:text-white/90":
                 font.family === selectedFont?.family,
-              "border bg-white text-primary hover:bg-gray-200":
-                font.family !== selectedFont?.family,
             },
           )}
           variant={"ghostV2"}
@@ -165,7 +163,10 @@ function FontDisplay({
           {logoName || font.family}
           <div
             className={cn(
-              "absolute bottom-0 right-0 z-10 cursor-pointer rounded-full p-1 text-xs text-gray-400 group-hover:text-gray-600",
+              "absolute bottom-0 right-0 z-10 cursor-pointer rounded-full p-1 text-xs text-primary/60 group-hover:text-white/90",
+              {
+                "text-white/70": font.family === selectedFont?.family,
+              },
               inter.className,
             )}
             style={{ fontFamily: undefined }}
