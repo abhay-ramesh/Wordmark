@@ -20,12 +20,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <JotaiProvider>
       {process.env.NEXT_PUBLIC_ENABLE_POSTHOG === "true" ? (
         <PostHogProvider client={posthog}>
-          <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             {children}
           </ThemeProvider>
         </PostHogProvider>
       ) : (
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           {children}
         </ThemeProvider>
       )}

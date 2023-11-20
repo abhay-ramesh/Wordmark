@@ -42,17 +42,15 @@ const menuItems = [
 
 export const MenuList = () => {
   return (
-    <TabsList className="flex h-fit w-full justify-start overflow-x-auto rounded-r-none md:h-full md:w-fit md:flex-col md:overflow-x-visible">
+    <TabsList className="flex h-fit w-full justify-start overflow-x-auto rounded-b-none sm:rounded-l-md sm:rounded-r-none md:h-full md:w-fit md:flex-col md:overflow-x-visible">
       {menuItems.map((item, id) => (
         <div key={id} className="w-full">
           <TabsTrigger
-            className="flex aspect-square h-20 w-full flex-col items-center justify-center space-y-2 p-2 text-gray-600 md:w-20"
+            className="flex aspect-square h-20 w-full flex-col items-center justify-center space-y-2 p-2 md:w-20"
             value={item.name}
           >
             {item.icon}
-            <text className="text-xs font-semibold text-gray-600">
-              {item.label}
-            </text>
+            <text className="text-xs font-semibold ">{item.label}</text>
           </TabsTrigger>
 
           <Separator orientation="vertical" className="md:hidden" />
