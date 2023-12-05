@@ -1,4 +1,4 @@
-![Wordmark Logo](public/Wordmark.png)
+![Wordmark Logo](public/Wordmark-Light.png)
 
 # Wordmark - Effortless Logo Design with Google Fonts
 
