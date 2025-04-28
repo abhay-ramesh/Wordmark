@@ -1,10 +1,9 @@
 import { Layouts } from "@/components/custom/SelectableLayoutCard";
 import { LucideIconType } from "@/components/icons";
 import { atom } from "jotai";
-import { atomWithStorage } from "jotai/utils";
-import { FontItem } from "./fonts";
 import { IColor } from "react-color-palette";
 import { Units } from "./constants";
+import { FontItem } from "./fonts";
 
 export const layoutAtom = atom<Layouts>("ltr");
 
@@ -103,6 +102,7 @@ export const cardAtom = atom<{
     value: number;
     unit: UnitType;
   };
+  ratioLocked: boolean;
 }>({
   color: {
     hex: "#ffffff",
@@ -127,4 +127,5 @@ export const cardAtom = atom<{
     value: 225,
     unit: "px",
   },
+  ratioLocked: false,
 });

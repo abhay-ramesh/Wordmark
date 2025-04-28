@@ -48,7 +48,7 @@ export function FontProviderSelector({
 
   // Default to first available provider
   const [activeProvider, setActiveProvider] = useState<string>(
-    availableProviders[0] || "custom",
+    availableProviders[0] || "all",
   );
 
   // Set active provider when available providers change

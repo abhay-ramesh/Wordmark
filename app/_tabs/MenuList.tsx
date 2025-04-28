@@ -1,62 +1,69 @@
 "use client";
-import { Separator } from "@/components/ui/separator";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  Box,
-  BoxSelect,
-  CaseSensitive,
-  CircuitBoard,
-  FoldHorizontal,
-  FolderHeart,
-  LayoutDashboard,
-  Palette,
-} from "lucide-react";
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Image, Layout, Square, Type } from "lucide-react";
 
 const menuItems = [
   {
     name: "text",
-    icon: <CaseSensitive size={32} />,
+    icon: <Type size={20} />,
     label: "Text",
+    description: "Customize your text content, font, size, and color",
   },
   {
     name: "icon",
-    icon: <FolderHeart size={32} />,
+    icon: <Image size={20} />,
     label: "Icon",
+    description: "Choose and customize an icon for your design",
   },
   {
     name: "card",
-    icon: <CircuitBoard size={32} />,
+    icon: <Square size={20} />,
     label: "Card",
+    description: "Set background color and dimensions of your design",
   },
-  // {
-  //   name: "space",
-  //   icon: <FoldHorizontal size={32} />,
-  //   label: "Space",
-  // },
   {
     name: "layout",
-    icon: <LayoutDashboard size={32} />,
+    icon: <Layout size={20} />,
     label: "Layout",
+    description: "Choose how text and icon are arranged in your design",
   },
 ];
 
 export const MenuList = () => {
   return (
-    <TabsList className="flex h-fit w-full justify-start overflow-x-auto rounded-b-none sm:rounded-l-md sm:rounded-r-none md:h-full md:w-fit md:flex-col md:overflow-x-visible">
-      {menuItems.map((item, id) => (
-        <div key={id} className="w-full">
-          <TabsTrigger
-            className="flex aspect-square h-20 w-full flex-col items-center justify-center space-y-2 p-2 md:w-20"
-            value={item.name}
-          >
-            {item.icon}
-            <text className="text-xs font-semibold ">{item.label}</text>
-          </TabsTrigger>
-
-          <Separator orientation="vertical" className="md:hidden" />
-          <Separator orientation="horizontal" className="hidden md:block" />
-        </div>
-      ))}
+    <TabsList className="flex h-fit w-full justify-evenly rounded-none border-b bg-background/40 px-2 sm:rounded-l-md sm:rounded-r-none md:h-full md:w-fit md:flex-col md:border-b-0 md:border-r">
+      <TooltipProvider delayDuration={300}>
+        {menuItems.map((item, id) => (
+          <div key={id} className="flex-1">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <TabsTrigger
+                  className="flex h-14 w-full flex-col items-center justify-center gap-2 rounded-sm px-2 py-3 data-[state=active]:bg-accent/30 data-[state=active]:shadow-none md:h-16 md:w-16"
+                  value={item.name}
+                >
+                  <div className="flex items-center justify-center">
+                    {item.icon}
+                  </div>
+                  <span className="text-xs font-medium">{item.label}</span>
+                </TabsTrigger>
+              </TooltipTrigger>
+              <TooltipContent
+                side="right"
+                align="center"
+                className="max-w-[200px]"
+              >
+                {item.description}
+              </TooltipContent>
+            </Tooltip>
+          </div>
+        ))}
+      </TooltipProvider>
     </TabsList>
   );
 };
