@@ -1,10 +1,11 @@
 "use client";
-import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { toPng, toJpeg, toSvg } from "html-to-image";
+import { cardAtom } from "@/lib/statemanager";
+import { toJpeg, toPng, toSvg } from "html-to-image";
 import { useAtomValue } from "jotai";
-import { cardAtom, layoutAtom } from "@/lib/statemanager";
+import { Download } from "lucide-react";
 import { event } from "nextjs-google-analytics";
+import { forwardRef, useEffect, useImperativeHandle } from "react";
 
 import {
   DropdownMenu,
@@ -16,12 +17,28 @@ import { Options } from "html-to-image/lib/types";
 import posthog from "posthog-js";
 
 const formats = ["png", "svg", "jpeg"] as const;
+export type DownloadFormat = (typeof formats)[number];
 
-function toImage(
-  format: (typeof formats)[number],
-  node: HTMLElement,
-  options?: Options,
-) {
+// Create a global handler for download functionality
+export const downloadHandler = {
+  downloadFn: null as ((format: DownloadFormat) => Promise<void>) | null,
+
+  // Method to trigger download
+  download: async (format: DownloadFormat = "png") => {
+    if (downloadHandler.downloadFn) {
+      await downloadHandler.downloadFn(format);
+    } else {
+      console.warn("Download function not initialized yet");
+    }
+  },
+
+  // Method to register the download function
+  register: (fn: (format: DownloadFormat) => Promise<void>) => {
+    downloadHandler.downloadFn = fn;
+  },
+};
+
+function toImage(format: DownloadFormat, node: HTMLElement, options?: Options) {
   switch (format) {
     case "png":
       return toPng(node, options);
@@ -32,10 +49,18 @@ function toImage(
   }
 }
 
-export function DownloadButton() {
+interface DownloadButtonProps {
+  id?: string;
+  invisible?: boolean;
+}
+
+export const DownloadButton = forwardRef<
+  { download: (format: DownloadFormat) => Promise<void> },
+  DownloadButtonProps
+>(({ id, invisible = false }, ref) => {
   const card = useAtomValue(cardAtom);
 
-  const download = async (format: (typeof formats)[number]) => {
+  const handleDownload = async (format: DownloadFormat) => {
     if (typeof window === "undefined") return;
     const node = document.getElementById("display-card");
     if (!node) return;
@@ -65,23 +90,39 @@ export function DownloadButton() {
     }, 1000);
   };
 
+  // Expose the download method via ref
+  useImperativeHandle(ref, () => ({
+    download: handleDownload,
+  }));
+
+  // Register the download function globally on component mount
+  useEffect(() => {
+    downloadHandler.register(handleDownload);
+    // No cleanup needed as we want the function to remain available
+  }, []);
+
+  if (invisible) {
+    return null;
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
+          id={id}
           variant="action"
-          className="h-fit w-fit rounded-full p-4"
+          className="p-4 rounded-full h-fit w-fit"
           name="Download"
         >
           <Download size={24} />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="flex w-fit min-w-fit flex-col gap-2 border-none bg-transparent shadow-none">
-        {formats.map((format, id) => (
+      <DropdownMenuContent className="flex flex-col gap-2 bg-transparent border-none shadow-none w-fit min-w-fit">
+        {formats.map((format, idx) => (
           <DropdownMenuItem
-            key={id}
-            className="flex aspect-square w-full justify-center rounded-full border bg-popover p-2 text-center hover:bg-gray-100"
-            onClick={() => download(format)}
+            key={idx}
+            className="flex justify-center p-2 w-full text-center rounded-full border aspect-square bg-popover hover:bg-gray-100"
+            onClick={() => handleDownload(format)}
           >
             {format.toUpperCase()}
           </DropdownMenuItem>
@@ -89,4 +130,7 @@ export function DownloadButton() {
       </DropdownMenuContent>
     </DropdownMenu>
   );
-}
+});
+
+// Display name for React DevTools
+DownloadButton.displayName = "DownloadButton";

@@ -1,9 +1,8 @@
 "use client";
 import { LayoutVariants } from "@/components/custom/SelectableLayoutCard";
-import { Card } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
 import { LucideIconStatic, LucideIconType } from "@/components/icons";
-import { useAtom, useAtomValue } from "jotai";
+import { Card } from "@/components/ui/card";
+import { FontLoader } from "@/lib/fonts";
 import {
   cardAtom,
   fontAtom,
@@ -11,7 +10,8 @@ import {
   layoutAtom,
   textAtom,
 } from "@/lib/statemanager";
-import { FontLoader } from "@/lib/fonts";
+import { cn } from "@/lib/utils";
+import { useAtom, useAtomValue } from "jotai";
 import { useEffect, useState } from "react";
 
 export function DisplayCard() {
@@ -44,7 +44,7 @@ export function DisplayCard() {
     <div
       className={cn(
         LayoutVariants({ layout }),
-        "m-0 h-fit w-fit max-w-full rounded-md bg-transparent p-0 shadow-2xl",
+        "display-card m-0 h-fit w-fit max-w-full rounded-md bg-transparent p-0 shadow-2xl",
         {
           "rounded-full": layout === "circle",
         },

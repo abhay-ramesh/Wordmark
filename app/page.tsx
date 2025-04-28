@@ -10,30 +10,33 @@ import { Boxes } from "lucide-react";
 import { CardTab, IconTab, LayoutTab, MenuList, TextTab } from "./_tabs";
 import { Credits } from "./Credits";
 import { DisplayCard } from "./DisplayCard";
-import { FloatButtons } from "./FloatButtons";
+import { DownloadButton } from "./DownloadButton";
+import { VersionHistoryWrapper } from "./VersionHistoryWrapper";
 
 export type UnitType = (typeof Units)[number];
 
 export default function Home() {
   return (
-    <div className="flex relative flex-col-reverse justify-end p-4 space-y-2 space-y-reverse min-h-screen md:h-screen md:space-y-0">
-      <FloatButtons />
+    <div className="relative flex min-h-screen flex-col-reverse justify-end space-y-2 space-y-reverse p-4 md:h-screen md:space-y-0">
       <Credits isMobileViewVisible />
+
+      {/* Invisible DownloadButton to initialize the download handler */}
+      <DownloadButton invisible />
 
       {/* Desktop View - Resizable Layout */}
       <div className="hidden w-full md:block md:h-full">
         <ResizablePanelGroup
           direction="horizontal"
-          className="w-full h-full rounded-lg border"
+          className="h-full w-full rounded-lg border"
         >
           {/* Editor Panel */}
           <ResizablePanel defaultSize={40} minSize={30} className="h-full">
-            <div className="flex flex-col w-full h-full">
-              <div className="flex flex-none justify-center items-center space-x-2 w-full h-20 text-center text-gray-600 rounded-t-lg border-b bg-primary-foreground dark:text-gray-300">
-                <Boxes size={32} className="" />
-                <text className="w-fit text-center text-2xl font-semibold [text-wrap:balance]">
+            <div className="flex h-full w-full flex-col">
+              <div className="flex h-20 w-full flex-none items-center justify-center rounded-t-lg border-b bg-primary-foreground text-center text-gray-600 dark:text-gray-300">
+                <Boxes size={32} />
+                <span className="ml-2 text-center text-2xl font-semibold [text-wrap:balance]">
                   Wordmark.
-                </text>
+                </span>
               </div>
 
               <Tabs
@@ -58,8 +61,11 @@ export default function Home() {
 
           {/* Preview Panel */}
           <ResizablePanel defaultSize={60}>
-            <div className="flex justify-center items-center p-4 w-full h-full bg-background">
-              <DisplayCard />
+            <div className="flex h-full w-full flex-col items-center justify-center bg-background p-4">
+              <div className="flex flex-1 items-center justify-center">
+                <DisplayCard />
+              </div>
+              <VersionHistoryWrapper />
               <Credits isMobileViewVisible={false} />
             </div>
           </ResizablePanel>
@@ -67,12 +73,19 @@ export default function Home() {
       </div>
 
       {/* Mobile View - Stacked Layout */}
-      <div className="flex flex-col w-full md:hidden">
-        <aside className="flex flex-col w-full h-2/3">
+      <div className="flex w-full flex-col md:hidden">
+        <div className="flex h-16 w-full items-center justify-center rounded-lg border bg-primary-foreground text-center">
+          <Boxes size={28} />
+          <span className="ml-2 text-center text-xl font-semibold [text-wrap:balance]">
+            Wordmark.
+          </span>
+        </div>
+
+        <aside className="mt-2 flex h-2/3 w-full flex-col">
           <Tabs
             orientation="vertical"
             defaultValue="text"
-            className="flex flex-col mt-2 w-full h-full rounded-lg border bg-muted/80"
+            className="flex h-full w-full flex-col rounded-lg border bg-muted/80"
           >
             <MenuList />
             <Separator orientation="horizontal" />
@@ -83,16 +96,12 @@ export default function Home() {
           </Tabs>
         </aside>
 
-        <div className="flex relative justify-center items-center p-4 mt-2 w-full h-1/3 rounded-lg border">
-          <DisplayCard />
+        <div className="relative mt-2 flex h-1/3 w-full flex-col items-center justify-center rounded-lg border p-4">
+          <div className="flex w-full flex-1 items-center justify-center">
+            <DisplayCard />
+          </div>
+          <VersionHistoryWrapper />
           <Credits isMobileViewVisible={false} />
-        </div>
-
-        <div className="flex justify-center items-center mt-2 space-x-2 w-full h-20 text-center rounded-lg border bg-primary-foreground">
-          <Boxes size={32} className="" />
-          <text className="w-fit text-center text-2xl font-semibold [text-wrap:balance]">
-            Wordmark.
-          </text>
         </div>
       </div>
     </div>
