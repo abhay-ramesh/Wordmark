@@ -13,7 +13,10 @@ export function TextTab() {
   const [textState, setTextState] = useAtom(textAtom);
 
   return (
-    <TabsContent value="text" className="overflow-hidden flex-1 p-0 h-full">
+    <TabsContent
+      value="text"
+      className="overflow-hidden flex-1 p-0 mt-0 h-full"
+    >
       <div className="flex flex-col h-full">
         {/* Text Content and Styling Section */}
         <div className="flex flex-col flex-none gap-4 p-4 border-b">

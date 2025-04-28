@@ -153,8 +153,8 @@ export function CardTab() {
   };
 
   return (
-    <TabsContent value="card" className="h-full flex-1 overflow-auto p-0">
-      <div className="flex flex-col gap-6 border-b p-4">
+    <TabsContent value="card" className="overflow-auto flex-1 p-0 mt-0 h-full">
+      <div className="flex flex-col gap-6 p-4 border-b">
         <SectionHeader
           title="Background"
           icon={Square}
@@ -179,9 +179,9 @@ export function CardTab() {
         />
 
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex justify-between items-center">
             <Label>Dimensions</Label>
-            <div className="flex items-center gap-2">
+            <div className="flex gap-2 items-center">
               <Label
                 htmlFor="ratio-lock"
                 className="text-xs text-muted-foreground"
@@ -231,17 +231,17 @@ export function CardTab() {
 
           <div className="grid gap-4">
             {/* Width Controls */}
-            <div className="space-y-2 rounded-md bg-muted/20 p-3">
-              <div className="flex items-center justify-between">
+            <div className="p-3 space-y-2 rounded-md bg-muted/20">
+              <div className="flex justify-between items-center">
                 <Label htmlFor="width" className="text-sm font-medium">
                   Width
                 </Label>
                 <div className="flex items-center">
-                  <div className="flex h-8 items-center rounded bg-muted/30 pr-0">
+                  <div className="flex items-center pr-0 h-8 rounded bg-muted/30">
                     <input
                       id="width"
                       type="number"
-                      className="h-full w-16 bg-transparent pl-2 text-xs focus:outline-none"
+                      className="pl-2 w-16 h-full text-xs bg-transparent focus:outline-none"
                       min={1}
                       value={cardState.width.value}
                       onChange={handleWidthChange}
@@ -277,7 +277,7 @@ export function CardTab() {
                       }}
                     >
                       <SelectTrigger
-                        className="h-8 w-14 border-0 bg-transparent pl-1 pr-1 text-xs focus:ring-0"
+                        className="pr-1 pl-1 w-14 h-8 text-xs bg-transparent border-0 focus:ring-0"
                         aria-label="Width unit"
                       >
                         <SelectValue placeholder="Unit" />
@@ -335,7 +335,7 @@ export function CardTab() {
                   }
                 }}
               />
-              <div className="text-right text-xs text-muted-foreground">
+              <div className="text-xs text-right text-muted-foreground">
                 {cardState.width.unit === "px"
                   ? "Pixels"
                   : cardState.width.unit === "%"
@@ -349,17 +349,17 @@ export function CardTab() {
             </div>
 
             {/* Height Controls */}
-            <div className="space-y-2 rounded-md bg-muted/20 p-3">
-              <div className="flex items-center justify-between">
+            <div className="p-3 space-y-2 rounded-md bg-muted/20">
+              <div className="flex justify-between items-center">
                 <Label htmlFor="height" className="text-sm font-medium">
                   Height
                 </Label>
                 <div className="flex items-center">
-                  <div className="flex h-8 items-center rounded bg-muted/30 pr-0">
+                  <div className="flex items-center pr-0 h-8 rounded bg-muted/30">
                     <input
                       id="height"
                       type="number"
-                      className="h-full w-16 bg-transparent pl-2 text-xs focus:outline-none"
+                      className="pl-2 w-16 h-full text-xs bg-transparent focus:outline-none"
                       min={1}
                       value={cardState.height.value}
                       onChange={handleHeightChange}
@@ -395,7 +395,7 @@ export function CardTab() {
                       }}
                     >
                       <SelectTrigger
-                        className="h-8 w-14 border-0 bg-transparent pl-1 pr-1 text-xs focus:ring-0"
+                        className="pr-1 pl-1 w-14 h-8 text-xs bg-transparent border-0 focus:ring-0"
                         aria-label="Height unit"
                       >
                         <SelectValue placeholder="Unit" />
@@ -453,7 +453,7 @@ export function CardTab() {
                   }
                 }}
               />
-              <div className="text-right text-xs text-muted-foreground">
+              <div className="text-xs text-right text-muted-foreground">
                 {cardState.height.unit === "px"
                   ? "Pixels"
                   : cardState.height.unit === "%"

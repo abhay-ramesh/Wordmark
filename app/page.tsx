@@ -16,7 +16,7 @@ export type UnitType = (typeof Units)[number];
 
 export default function Home() {
   return (
-    <div className="relative flex min-h-screen flex-col-reverse justify-end space-y-2 space-y-reverse p-4 md:h-screen md:space-y-0">
+    <div className="flex relative flex-col-reverse justify-end p-4 space-y-2 space-y-reverse min-h-screen md:h-screen md:space-y-0">
       {/* Invisible DownloadButton to initialize the download handler */}
       <DownloadButton invisible />
 
@@ -24,12 +24,12 @@ export default function Home() {
       <div className="hidden w-full md:block md:h-full">
         <ResizablePanelGroup
           direction="horizontal"
-          className="h-full w-full rounded-lg border"
+          className="w-full h-full rounded-lg border"
         >
           {/* Editor Panel */}
           <ResizablePanel defaultSize={40} minSize={30} className="h-full">
-            <div className="flex h-full w-full flex-col">
-              <div className="flex h-20 w-full flex-none flex-col items-center justify-center rounded-t-lg border-b bg-primary-foreground text-center text-gray-600 dark:text-gray-300">
+            <div className="flex flex-col w-full h-full">
+              <div className="flex flex-col flex-none justify-center items-center w-full h-20 text-center text-gray-600 rounded-t-lg border-b bg-primary-foreground dark:text-gray-300">
                 <div className="flex items-center">
                   <Boxes size={32} />
                   <span className="ml-2 text-center text-2xl font-semibold [text-wrap:balance]">
@@ -69,8 +69,8 @@ export default function Home() {
 
           {/* Preview Panel */}
           <ResizablePanel defaultSize={60}>
-            <div className="flex h-full w-full flex-col items-center justify-center bg-background p-4">
-              <div className="flex flex-1 items-center justify-center">
+            <div className="flex flex-col justify-center items-center p-4 w-full h-full bg-background">
+              <div className="flex flex-1 justify-center items-center">
                 <DisplayCard />
               </div>
               <VersionHistoryWrapper />
@@ -80,8 +80,8 @@ export default function Home() {
       </div>
 
       {/* Mobile View - Stacked Layout */}
-      <div className="flex w-full flex-col md:hidden">
-        <div className="flex h-20 w-full flex-col items-center justify-center rounded-lg border bg-primary-foreground text-center">
+      <div className="flex flex-col w-full md:hidden">
+        <div className="flex flex-col justify-center items-center w-full h-20 text-center rounded-lg border bg-primary-foreground">
           <div className="flex items-center">
             <Boxes size={28} />
             <span className="ml-2 text-center text-xl font-semibold [text-wrap:balance]">
@@ -99,11 +99,11 @@ export default function Home() {
           </div>
         </div>
 
-        <aside className="mt-2 flex h-2/3 w-full flex-col">
+        <aside className="flex flex-col mt-2 w-full h-2/3">
           <Tabs
             orientation="vertical"
             defaultValue="text"
-            className="flex h-full w-full flex-col rounded-lg border bg-muted/80"
+            className="flex flex-col w-full h-full rounded-lg border bg-muted/80"
           >
             <MenuList />
             <Separator orientation="horizontal" />
@@ -114,20 +114,20 @@ export default function Home() {
           </Tabs>
         </aside>
 
-        <div className="relative mt-2 flex h-1/3 w-full flex-col items-center justify-center rounded-lg border p-4">
-          <div className="flex w-full flex-1 items-center justify-center">
+        <div className="flex relative flex-col justify-center items-center p-4 mt-2 w-full h-1/3 rounded-lg border">
+          <div className="flex flex-1 justify-center items-center w-full">
             <DisplayCard />
           </div>
           <VersionHistoryWrapper />
         </div>
 
         {/* Mobile GitHub star link */}
-        <div className="mt-2 flex flex-row items-center justify-center rounded-lg border px-4 py-3">
+        <div className="flex flex-row justify-center items-center px-4 py-3 mt-2 rounded-lg border">
           <a
             href="https://github.com/Abhay2611/wordmark"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1 text-xs"
+            className="flex gap-1 items-center text-xs"
           >
             <Github size={16} className="mr-1" />
             <span>Star on GitHub</span>
