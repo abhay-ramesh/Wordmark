@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/tooltip";
 import {
   Download,
+  Github,
   Image,
   Layout,
   MessageCircle,
@@ -167,6 +168,29 @@ export const MenuList = () => {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+          </div>
+
+          {/* GitHub star button */}
+          <div className="mb-2 flex justify-center">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <a
+                  href="https://github.com/Abhay2611/wordmark"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex h-10 w-10 items-center justify-center rounded-md hover:bg-accent/50"
+                >
+                  <Github size={20} className="text-foreground" />
+                </a>
+              </TooltipTrigger>
+              <TooltipContent
+                side="right"
+                align="center"
+                className="max-w-[200px]"
+              >
+                Star on GitHub
+              </TooltipContent>
+            </Tooltip>
           </div>
         </TooltipProvider>
       </div>
