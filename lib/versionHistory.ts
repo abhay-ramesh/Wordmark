@@ -2,6 +2,7 @@ import { Layouts } from "@/components/custom/SelectableLayoutCard";
 import { LucideIconType } from "@/components/icons";
 import html2canvas from "html2canvas";
 import { atom } from "jotai";
+import { atomWithStorage } from "jotai/utils";
 import { IColor } from "react-color-palette";
 import { Units } from "./constants";
 import { FontItem } from "./fonts";
@@ -44,6 +45,12 @@ export interface DesignVersion {
   thumbnail?: string; // Base64 encoded image thumbnail
 }
 
+// Favorite version data structure - storing only essential info to save space
+export interface FavoriteVersion extends DesignVersion {
+  name?: string; // Optional custom name for the favorite
+  favoriteId: string; // Unique ID for the favorite (different from version id)
+}
+
 // Maximum number of versions to keep in history
 const MAX_HISTORY_SIZE = 30;
 
@@ -52,6 +59,12 @@ export const versionHistoryAtom = atom<DesignVersion[]>([]);
 
 // Current version index atom
 export const currentVersionIndexAtom = atom<number>(-1);
+
+// Favorites atom with localStorage persistence
+export const favoriteVersionsAtom = atomWithStorage<FavoriteVersion[]>(
+  "wordmark-favorites",
+  [],
+);
 
 // Helper atom to get the current version
 export const currentVersionAtom = atom((get) => {
@@ -99,6 +112,65 @@ export const addVersionAtom = atom(null, (get, set, thumbnail?: string) => {
   set(currentVersionIndexAtom, updatedHistory.length - 1);
 });
 
+// Add current version to favorites
+export const addToFavoritesAtom = atom(null, (get, set, name?: string) => {
+  const currentVersion = get(currentVersionAtom);
+  if (!currentVersion) return;
+
+  const favorites = get(favoriteVersionsAtom);
+
+  // Create a unique ID for the favorite
+  const favoriteId = `fav-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+
+  // Add to favorites with optional name
+  const newFavorite: FavoriteVersion = {
+    ...currentVersion,
+    favoriteId,
+    name: name || `Favorite #${favorites.length + 1}`,
+  };
+
+  set(favoriteVersionsAtom, [...favorites, newFavorite]);
+});
+
+// Remove a version from favorites
+export const removeFromFavoritesAtom = atom(
+  null,
+  (get, set, favoriteId: string) => {
+    const favorites = get(favoriteVersionsAtom);
+    set(
+      favoriteVersionsAtom,
+      favorites.filter((fav) => fav.favoriteId !== favoriteId),
+    );
+  },
+);
+
+// Check if the current version is in favorites
+export const isCurrentVersionFavoritedAtom = atom((get) => {
+  const currentVersion = get(currentVersionAtom);
+  if (!currentVersion) return false;
+
+  const favorites = get(favoriteVersionsAtom);
+
+  // Compare based on deep equality of relevant properties (not using ID since favorites may be from different sessions)
+  return favorites.some(
+    (fav) =>
+      JSON.stringify({
+        text: fav.text,
+        card: fav.card,
+        icon: fav.icon,
+        layout: fav.layout,
+        font: fav.font?.family,
+      }) ===
+      JSON.stringify({
+        text: currentVersion.text,
+        card: currentVersion.card,
+        icon: currentVersion.icon,
+        layout: currentVersion.layout,
+        font: currentVersion.font?.family,
+      }),
+  );
+});
+
 // Restore a specific version
 export const restoreVersionAtom = atom(
   null,
@@ -118,6 +190,22 @@ export const restoreVersionAtom = atom(
       // Update current version index
       set(currentVersionIndexAtom, versionIndex);
     }
+  },
+);
+
+// Restore a favorite version
+export const restoreFavoriteAtom = atom(
+  null,
+  (get, set, favorite: FavoriteVersion) => {
+    // Restore all state atoms
+    set(cardAtom, favorite.card);
+    set(textAtom, favorite.text);
+    if (favorite.font) set(fontAtom, favorite.font);
+    set(iconAtom, favorite.icon);
+    set(layoutAtom, favorite.layout);
+
+    // Create a new version in history based on this favorite
+    set(addVersionAtom, favorite.thumbnail);
   },
 );
 
