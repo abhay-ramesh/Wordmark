@@ -38,16 +38,19 @@
     "@radix-ui/react-toast": "^1.1.5",
     "@radix-ui/react-toggle": "^1.0.3",
     "@radix-ui/react-tooltip": "^1.0.7",
+    "@tanstack/react-query": "^5.74.7",
     "@types/node": "20.5.7",
     "@types/react": "18.2.21",
     "@types/react-dom": "18.2.7",
     "autoprefixer": "10.4.15",
+    "axios": "^1.9.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "cmdk": "^0.2.0",
     "date-fns": "^2.30.0",
     "eslint": "8.48.0",
     "eslint-config-next": "13.4.19",
+    "fuse.js": "^7.1.0",
     "html-to-image": "^1.11.11",
     "jotai": "^2.5.1",
     "lucide-react": "^0.270.0",
@@ -66,12 +69,14 @@
     "tailwind-merge": "^1.14.0",
     "tailwindcss": "3.3.3",
     "tailwindcss-animate": "^1.0.7",
+    "typekit": "^0.1.1",
     "typescript": "5.2.2",
-    "zod": "^3.22.4"
+    "zod": "^3.24.3"
   },
   "devDependencies": {
     "eslint-config-prettier": "^9.0.0",
     "prettier": "3.0.2",
     "prettier-plugin-tailwindcss": "^0.5.7"
-  }
+  },
+  "packageManager": "pnpm@10.6.2+sha512.47870716bea1572b53df34ad8647b42962bc790ce2bf4562ba0f643237d7302a3d6a8ecef9e4bdfc01d23af1969aa90485d4cebb0b9638fa5ef1daef656f6c1b"
 }

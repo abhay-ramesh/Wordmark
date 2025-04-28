@@ -48,6 +48,14 @@ Have fellow entrepreneurs in your circle? Let them know about Wordmark. It's the
 
 Wordmark operates under the [Entrepreneur's License](LICENSE.md). Feel free to customize, adapt, and thrive with it.
 
+## ❤️ Acknowledgements
+
+Thanks to all the people who contributed to Wordmark~
+
+<a href="https://github.com/abhay-ramesh/Wordmark/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=abhay-ramesh/Wordmark" />
+</a>
+
 ---
 
 Crafted with 💡 for entrepreneurs by the Wordmark Team.

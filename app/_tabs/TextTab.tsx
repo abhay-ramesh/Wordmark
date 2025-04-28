@@ -1,100 +1,126 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
-import { TabsContent } from "@/components/ui/tabs";
-import { ColorPicker } from "react-color-palette";
-import { FontSelector } from "../../components/custom/FontSelector";
-import { useAtom } from "jotai";
-import { textAtom } from "@/lib/statemanager";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
+import { TabsContent } from "@/components/ui/tabs";
+import { textAtom } from "@/lib/statemanager";
+import { useAtom } from "jotai";
+import { Paintbrush } from "lucide-react";
+import { ColorPicker } from "react-color-palette";
+import FontSelector from "../../components/custom/FontSelector";
 
 export function TextTab() {
   const [textState, setTextState] = useAtom(textAtom);
 
   return (
-    <TabsContent value="text" className="w-full space-y-5 overflow-y-auto p-3">
-      <div className="grid w-full max-w-sm items-center gap-2">
-        <Label htmlFor="business-name">Type your logo name</Label>
-        <Input
-          id="business-name"
-          type="text"
-          placeholder="Your Business Name"
-          className="border-2 border-blue-500"
-          value={textState.text}
-          onChange={(e) =>
-            setTextState((prev) => ({ ...prev, text: e.target.value }))
-          }
-          autoFocus
-        />
-      </div>
+    <TabsContent value="text" className="w-full space-y-4 overflow-y-auto p-4">
+      <div className="space-y-4 rounded-md border bg-card p-4 shadow-sm">
+        <div className="grid w-full items-center gap-1.5">
+          <Label
+            htmlFor="business-name"
+            className="text-sm text-muted-foreground"
+          >
+            Text
+          </Label>
+          <Input
+            id="business-name"
+            type="text"
+            placeholder="Your Business Name"
+            className="h-9"
+            value={textState.text}
+            onChange={(e) =>
+              setTextState((prev) => ({ ...prev, text: e.target.value }))
+            }
+            autoFocus
+          />
+        </div>
 
-      {/* Set Font Size */}
-      <div className="grid w-full max-w-sm items-center gap-2">
-        <Label htmlFor="font-size">Set Font Size</Label>
-        <Slider
-          id="font-size"
-          min={12}
-          max={72}
-          step={1}
-          value={[textState.size]}
-          onValueChange={(value) =>
-            setTextState((prev) => ({ ...prev, size: value[0] }))
-          }
-          className="py-4"
-        />
-        <Input
-          id="font-size"
-          type="number"
-          placeholder="Font Size"
-          className=""
-          value={textState.size}
-          onChange={(e) => {
-            setTextState((prev) => ({
-              ...prev,
-              size: Number(e.target.value),
-            }));
-          }}
-        />
-      </div>
+        <div className="grid w-full items-center gap-1.5">
+          <div className="flex items-center justify-between">
+            <Label
+              htmlFor="font-size"
+              className="text-sm text-muted-foreground"
+            >
+              Size
+            </Label>
+            <span className="text-xs text-muted-foreground">
+              {textState.size}px
+            </span>
+          </div>
+          <div className="flex gap-2">
+            <Slider
+              id="font-size"
+              min={12}
+              max={72}
+              step={1}
+              value={[textState.size]}
+              onValueChange={(value) =>
+                setTextState((prev) => ({ ...prev, size: value[0] }))
+              }
+              className="flex-1"
+            />
+            <Input
+              id="font-size-input"
+              type="number"
+              className="h-8 w-16"
+              value={textState.size}
+              onChange={(e) => {
+                const size = Number(e.target.value);
+                if (size >= 12 && size <= 72) {
+                  setTextState((prev) => ({
+                    ...prev,
+                    size,
+                  }));
+                }
+              }}
+            />
+          </div>
+        </div>
 
-      {/* Pick Font Color */}
-      <div className="grid w-full max-w-sm items-center gap-2">
-        <Label htmlFor="font-color-picker">Set Font Color</Label>
-        {/* <input type="color" id="font-color-picker" className="" /> */}
-        {/* <Popover>
-          <PopoverTrigger asChild>
-            <div>
+        <div className="grid w-full items-center gap-1.5">
+          <Label
+            htmlFor="font-color-picker"
+            className="text-sm text-muted-foreground"
+          >
+            Color
+          </Label>
+          <Popover>
+            <PopoverTrigger asChild>
               <Button
                 variant="outline"
-                className="flex items-center justify-between p-0 w-fit"
+                className="flex h-9 w-full items-center justify-between"
               >
-                <span className="px-2">Pick Font Color</span>
-                <div
-                  className="inline-block h-full aspect-square rounded-r-md"
-                  style={{ backgroundColor: textState.color.hex }}
-                />
+                <div className="flex items-center gap-2">
+                  <div
+                    className="h-4 w-4 rounded-sm border"
+                    style={{ backgroundColor: textState.color.hex }}
+                  />
+                  <span className="text-sm">{textState.color.hex}</span>
+                </div>
+                <Paintbrush className="h-4 w-4 opacity-50" />
               </Button>
-            </div>
-          </PopoverTrigger>
-          <PopoverContent className="w-fit bg-primary-foreground"> */}
-        <ColorPicker
-          color={textState.color}
-          onChange={(color) =>
-            setTextState((prev) => ({ ...prev, color: color }))
-          }
-        />
-        {/* </PopoverContent>
-        </Popover> */}
+            </PopoverTrigger>
+            <PopoverContent className="w-fit p-0">
+              <ColorPicker
+                color={textState.color}
+                onChange={(color) =>
+                  setTextState((prev) => ({ ...prev, color: color }))
+                }
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
       </div>
 
-      {/* Pick Font */}
-      <FontSelector />
+      <div className="h-[calc(100%-12rem)]">
+        <FontSelector />
+      </div>
     </TabsContent>
   );
 }
