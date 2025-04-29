@@ -32,6 +32,8 @@ import { useEffect, useRef, useState } from "react";
 import { LayoutVariants } from "../custom/SelectableLayoutCard";
 import { Button } from "../ui/button";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
+import { ExportMenu } from "./ExportMenu";
+import { ImportDialog } from "./ImportDialog";
 
 export function VersionHistory() {
   const [history] = useAtom(versionHistoryAtom);
@@ -167,7 +169,7 @@ export function VersionHistory() {
         value={activeTab}
         onValueChange={setActiveTab}
       >
-        <div className="flex justify-between items-center mb-2">
+        <div className="mb-2 flex items-center justify-between">
           <TabsList className="grid w-[200px] grid-cols-2">
             <TabsTrigger value="history">History</TabsTrigger>
             <TabsTrigger value="favorites">
@@ -182,7 +184,7 @@ export function VersionHistory() {
                   size="icon"
                   onClick={handleFavoriteCurrentVersion}
                   className={cn(
-                    "w-8 h-8 rounded-full",
+                    "h-8 w-8 rounded-full",
                     isCurrentFavorited
                       ? "text-yellow-500"
                       : "text-muted-foreground",
@@ -200,6 +202,10 @@ export function VersionHistory() {
                 </span>
               </>
             )}
+            <div className="flex items-center">
+              <ExportMenu />
+              <ImportDialog />
+            </div>
           </div>
         </div>
 
@@ -209,14 +215,14 @@ export function VersionHistory() {
               variant="ghost"
               size="icon"
               onClick={scrollLeft}
-              className="absolute left-0 top-1/2 z-10 w-8 h-8 transform -translate-y-1/2 bg-background/80"
+              className="absolute left-0 top-1/2 z-10 h-8 w-8 -translate-y-1/2 transform bg-background/80"
             >
-              <ChevronLeft className="w-4 h-4" />
+              <ChevronLeft className="h-4 w-4" />
             </Button>
 
-            <ScrollArea className="pb-2 w-full">
+            <ScrollArea className="w-full pb-2">
               <div
-                className="flex px-6 py-3 space-x-3"
+                className="flex space-x-3 px-6 py-3"
                 ref={scrollContainerRef}
               >
                 {history.map((version, index) => (
@@ -239,9 +245,9 @@ export function VersionHistory() {
               variant="ghost"
               size="icon"
               onClick={scrollRight}
-              className="absolute right-0 top-1/2 z-10 w-8 h-8 transform -translate-y-1/2 bg-background/80"
+              className="absolute right-0 top-1/2 z-10 h-8 w-8 -translate-y-1/2 transform bg-background/80"
             >
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
         </TabsContent>
@@ -249,7 +255,7 @@ export function VersionHistory() {
         <TabsContent value="favorites" className="mt-0">
           {favorites.length === 0 ? (
             <div className="py-8 text-center text-muted-foreground">
-              <Bookmark className="mx-auto mb-2 w-8 h-8 opacity-50" />
+              <Bookmark className="mx-auto mb-2 h-8 w-8 opacity-50" />
               <p>No favorites yet</p>
               <p className="mt-1 text-xs">
                 Star your favorite versions to save them here
@@ -257,7 +263,7 @@ export function VersionHistory() {
             </div>
           ) : (
             <div className="relative w-full">
-              <ScrollArea className="pb-2 w-full">
+              <ScrollArea className="w-full pb-2">
                 <div className="grid grid-cols-2 gap-4 p-2 sm:grid-cols-3 md:grid-cols-4">
                   {favorites.map((favorite) => (
                     <FavoriteCard
@@ -284,7 +290,7 @@ export function VersionHistory() {
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 gap-4 items-center">
+            <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="favorite-name" className="text-right">
                 Name
               </Label>
@@ -351,9 +357,9 @@ function VersionCard({
       <button
         onClick={onClick}
         className={cn(
-          "flex relative flex-col transition-all group",
+          "group relative flex flex-col transition-all",
           isActive
-            ? "ring-2 scale-105 ring-primary"
+            ? "scale-105 ring-2 ring-primary"
             : "hover:ring-1 hover:ring-primary/50",
         )}
       >
@@ -375,7 +381,7 @@ function VersionCard({
           {/* Icon (if layout includes icon) */}
           {version.layout !== "text" && version.icon && (
             <div
-              className="flex absolute justify-center items-center"
+              className="absolute flex items-center justify-center"
               style={{
                 top:
                   version.layout === "ltr" || version.layout === "rtl"
@@ -408,7 +414,7 @@ function VersionCard({
             version.layout !== "circle" &&
             version.text && (
               <div
-                className="flex overflow-hidden justify-center items-center w-full h-full text-center"
+                className="flex h-full w-full items-center justify-center overflow-hidden text-center"
                 style={{
                   color: version.text.color.hex,
                   fontFamily: version.font?.family || undefined,
@@ -425,7 +431,7 @@ function VersionCard({
         {/* Version label */}
         <div
           className={cn(
-            "flex absolute -top-2 -right-2 justify-center items-center w-5 h-5 font-semibold rounded-full border bg-background text-[10px]",
+            "absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full border bg-background text-[10px] font-semibold",
             isActive ? "border-primary" : "border-muted-foreground/30",
           )}
         >
@@ -483,13 +489,13 @@ function FavoriteCard({
   }, [favorite.font?.family]);
 
   return (
-    <div className="flex flex-col p-3 rounded-lg border transition-colors hover:bg-accent/50">
-      <div className="flex justify-between items-start mb-2">
-        <h4 className="pr-2 text-sm font-medium truncate">{favorite.name}</h4>
+    <div className="flex flex-col rounded-lg border p-3 transition-colors hover:bg-accent/50">
+      <div className="mb-2 flex items-start justify-between">
+        <h4 className="truncate pr-2 text-sm font-medium">{favorite.name}</h4>
         <Button
           variant="ghost"
           size="icon"
-          className="w-6 h-6 rounded-full hover:bg-destructive/10 hover:text-destructive"
+          className="h-6 w-6 rounded-full hover:bg-destructive/10 hover:text-destructive"
           onClick={(e) => {
             e.stopPropagation();
             onRemove();
@@ -514,7 +520,7 @@ function FavoriteCard({
 
       <button
         onClick={onClick}
-        className="flex justify-center items-center self-center transition-all hover:ring-1 hover:ring-primary/50"
+        className="flex items-center justify-center self-center transition-all hover:ring-1 hover:ring-primary/50"
       >
         {/* Favorite card preview */}
         <div
@@ -531,7 +537,7 @@ function FavoriteCard({
           {/* Icon (if layout includes icon) */}
           {favorite.layout !== "text" && favorite.icon && (
             <div
-              className="flex absolute justify-center items-center"
+              className="absolute flex items-center justify-center"
               style={{
                 top:
                   favorite.layout === "ltr" || favorite.layout === "rtl"
@@ -559,7 +565,7 @@ function FavoriteCard({
             favorite.layout !== "circle" &&
             favorite.text && (
               <div
-                className="flex overflow-hidden justify-center items-center w-full h-full text-center"
+                className="flex h-full w-full items-center justify-center overflow-hidden text-center"
                 style={{
                   color: favorite.text.color.hex,
                   fontFamily: favorite.font?.family || undefined,
@@ -580,7 +586,7 @@ function FavoriteCard({
         {favorite.font?.family && <style>{fontCSS}</style>}
       </button>
 
-      <div className="mt-2 text-xs text-center text-muted-foreground">
+      <div className="mt-2 text-center text-xs text-muted-foreground">
         {format(new Date(favorite.timestamp), "MMM d, yyyy")}
       </div>
     </div>
