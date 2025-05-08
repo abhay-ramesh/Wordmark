@@ -10,16 +10,18 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import {
+  clearFontCache,
   ExtendedFontItem,
   getAllFontList,
   getAvailableProviders,
   getFontsByProvider,
   loadMoreFontsByProvider,
 } from "@/lib/fontProviders";
+import { onFontProviderEvent } from "@/lib/fontProviders/events";
 import { FontLoader } from "@/lib/fonts";
 import { fontAtom, textAtom } from "@/lib/statemanager";
 import { cn } from "@/lib/utils";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import Fuse from "fuse.js";
 import { useAtom, useAtomValue } from "jotai";
 import { Loader2, Search, Text, Type, X } from "lucide-react";
@@ -56,16 +58,48 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
   const [hasMoreFonts, setHasMoreFonts] = useState(true);
   const [allProviders, setAllProviders] = useState<string[]>([]);
   const fontContainerRef = useRef<HTMLDivElement>(null);
+  const queryClient = useQueryClient();
 
   // Get sample text - use typed text if available, otherwise use placeholder
   const sampleText = useMemo(() => {
     return textState.text || "The quick brown fox jumps";
   }, [textState.text]);
 
-  // Initialize providers
+  // Initialize providers and listen for font updates
   useEffect(() => {
     setAllProviders(getAvailableProviders());
-  }, []);
+
+    // Listen for font provider update events
+    const unsubscribe1 = onFontProviderEvent("fontSourceUpdated", () => {
+      // Clear cache and refetch
+      clearFontCache("all");
+      clearFontCache(`provider_${activeProvider}`);
+      setAllProviders(getAvailableProviders());
+
+      // Invalidate the query to force a refetch
+      queryClient.invalidateQueries({
+        queryKey: ["fonts", activeProvider, searchTerm, searchAll],
+      });
+    });
+
+    const unsubscribe2 = onFontProviderEvent("fontProviderUpdated", () => {
+      // Clear cache and refetch
+      clearFontCache("all");
+      clearFontCache(`provider_${activeProvider}`);
+      setAllProviders(getAvailableProviders());
+
+      // Invalidate the query to force a refetch
+      queryClient.invalidateQueries({
+        queryKey: ["fonts", activeProvider, searchTerm, searchAll],
+      });
+    });
+
+    // Cleanup
+    return () => {
+      unsubscribe1();
+      unsubscribe2();
+    };
+  }, [activeProvider, searchTerm, searchAll, queryClient]);
 
   // Fuse.js options for fuzzy search
   const fuseOptions = {
@@ -191,9 +225,9 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
   };
 
   return (
-    <div className={cn("flex flex-col w-full h-full", className)}>
+    <div className={cn("flex h-full w-full flex-col", className)}>
       {/* Font Provider Selector */}
-      <div className="flex-none px-2 py-1 space-y-2">
+      <div className="flex-none space-y-2 px-2 py-1">
         <FontProviderSelector
           className="mb-0"
           onChange={handleProviderChange}
@@ -208,49 +242,49 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
             id="font-selector"
             type="text"
             placeholder="Search fonts..."
-            className="pr-8 h-8 text-sm border-muted bg-background/50"
+            className="h-8 border-muted bg-background/50 pr-8 text-sm"
             onChange={(e) => setSearchTerm(e.target.value)}
             value={searchTerm}
             aria-label="Search fonts"
           />
-          <div className="flex absolute inset-y-0 right-0 items-center pr-2">
+          <div className="absolute inset-y-0 right-0 flex items-center pr-2">
             {searchTerm ? (
               <X
-                className="w-4 h-4 transition-colors cursor-pointer text-muted-foreground hover:text-foreground"
+                className="h-4 w-4 cursor-pointer text-muted-foreground transition-colors hover:text-foreground"
                 onClick={clearSearch}
               />
             ) : (
-              <Search className="w-4 h-4 text-muted-foreground" />
+              <Search className="h-4 w-4 text-muted-foreground" />
             )}
           </div>
         </div>
 
         {/* Controls */}
-        <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between">
           <label className="flex items-center space-x-1.5 text-xs text-muted-foreground">
             <input
               type="checkbox"
               checked={searchAll}
               onChange={() => setSearchAll(!searchAll)}
-              className="w-3 h-3 rounded border-muted text-primary"
+              className="h-3 w-3 rounded border-muted text-primary"
             />
             <span>Search all</span>
           </label>
 
-          <div className="flex gap-2 items-center">
-            <div className="flex gap-1 items-center">
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
               <Label
                 htmlFor="preview-toggle"
-                className="flex gap-1 items-center text-xs cursor-pointer text-muted-foreground"
+                className="flex cursor-pointer items-center gap-1 text-xs text-muted-foreground"
               >
                 {showSampleText ? (
                   <>
-                    <Text className="w-3 h-3" />
+                    <Text className="h-3 w-3" />
                     <span className="hidden sm:inline">Preview</span>
                   </>
                 ) : (
                   <>
-                    <Type className="w-3 h-3" />
+                    <Type className="h-3 w-3" />
                     <span className="hidden sm:inline">Names</span>
                   </>
                 )}
@@ -273,22 +307,22 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
       {/* Font List */}
       <div
         ref={fontContainerRef}
-        className="overflow-y-auto flex-1 border-t border-border/30 bg-background/20"
+        className="flex-1 overflow-y-auto border-t border-border/30 bg-background/20"
         onScroll={handleScroll}
       >
         <div className="grid gap-0.5 p-1">
           <TooltipProvider>
             {status === "pending" ? (
-              <div className="flex flex-col justify-center items-center py-10 text-muted-foreground">
-                <Loader2 className="mb-2 w-5 h-5 animate-spin" />
+              <div className="flex flex-col items-center justify-center py-10 text-muted-foreground">
+                <Loader2 className="mb-2 h-5 w-5 animate-spin" />
                 <p className="text-xs">Loading fonts</p>
               </div>
             ) : status === "error" ? (
-              <div className="flex justify-center items-center py-10 text-destructive">
+              <div className="flex items-center justify-center py-10 text-destructive">
                 <p className="text-sm">Error loading fonts</p>
               </div>
             ) : allFonts.length === 0 ? (
-              <div className="flex justify-center items-center py-10 text-muted-foreground">
+              <div className="flex items-center justify-center py-10 text-muted-foreground">
                 <p className="text-sm">No fonts found</p>
               </div>
             ) : (
@@ -366,8 +400,8 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
           </TooltipProvider>
 
           {isFetchingNextPage && (
-            <div className="col-span-1 py-2 w-full text-center">
-              <Loader2 className="mx-auto w-4 h-4 animate-spin" />
+            <div className="col-span-1 w-full py-2 text-center">
+              <Loader2 className="mx-auto h-4 w-4 animate-spin" />
             </div>
           )}
         </div>
@@ -376,9 +410,9 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
       {/* Selected Font Bar */}
       {selectedFont && (
         <div className="flex-none border-t border-border/30 bg-accent/10 px-2 py-1.5">
-          <div className="flex justify-between items-center">
+          <div className="flex items-center justify-between">
             <div
-              className="text-sm font-medium truncate"
+              className="truncate text-sm font-medium"
               style={{
                 fontFamily: selectedFont.family,
                 fontSize: "16px",
@@ -389,7 +423,7 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
             <Button
               variant="ghost"
               size="sm"
-              className="px-2 h-6 text-xs text-muted-foreground hover:bg-accent/50 hover:text-foreground"
+              className="h-6 px-2 text-xs text-muted-foreground hover:bg-accent/50 hover:text-foreground"
               onClick={clearSelectedFont}
             >
               Clear

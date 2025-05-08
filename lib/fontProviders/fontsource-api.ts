@@ -1,4 +1,6 @@
 import { FontItem } from "@/lib/fonts";
+import { emitFontProviderEvent } from "./events";
+import { clearFontCache } from "./index";
 
 /**
  * Fontsource API integration
@@ -67,6 +69,35 @@ const apiCache = {
 let isLoadingFonts = false;
 let currentOffset = 0;
 let hasMoreFonts = true;
+
+// Define the structure of a Fontsource API font
+export interface FontsourceAPIFont {
+  family: string;
+  id: string;
+  subsets: string[];
+  weights: number[];
+  styles: string[];
+  unicodeRange?: string;
+  defSubset: string;
+  variable?: boolean;
+  lastModified: string;
+  category: string;
+  version: string;
+  type: string;
+  variants?: {
+    [weight: string]: {
+      [style: string]: {
+        [subset: string]: {
+          url: {
+            woff2: string;
+            woff: string;
+            ttf: string;
+          };
+        };
+      };
+    };
+  };
+}
 
 /**
  * Function to fetch font data from the Fontsource API
@@ -201,36 +232,87 @@ const convertApiItemToFontItem = (font: FontsourceAPIFont): FontsourceItem => {
     ? font.weights[0]
     : 400;
 
-  // Generate CSS URLs for different variants
-  const cssBaseUrl = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(
-    font.family,
-  )}`;
-
   // Files for different variants
   const files: FontsourceFiles = {
-    regular: `${cssBaseUrl}&display=swap`,
+    regular: "", // Will be populated if font.variants is available
   };
 
-  if (hasItalic) {
-    files.italic = `${cssBaseUrl}:ital@1&display=swap`;
+  // Check if font has variants with direct URLs
+  if (font.variants) {
+    // Regular variant (weight 400, style normal)
+    if (font.variants["400"] && font.variants["400"].normal) {
+      const subset = font.defSubset || "latin";
+      if (font.variants["400"].normal[subset]?.url?.woff2) {
+        files.regular = font.variants["400"].normal[subset].url.woff2;
+      }
+    }
+
+    // Italic variant (weight 400, style italic)
+    if (hasItalic && font.variants["400"] && font.variants["400"].italic) {
+      const subset = font.defSubset || "latin";
+      if (font.variants["400"].italic[subset]?.url?.woff2) {
+        files.italic = font.variants["400"].italic[subset].url.woff2;
+      }
+    }
+
+    // Bold variant (weight 700, style normal)
+    const boldWeight = font.weights?.includes(700)
+      ? "700"
+      : font.weights?.includes(600)
+      ? "600"
+      : "400";
+    if (
+      hasBold &&
+      font.variants[boldWeight] &&
+      font.variants[boldWeight].normal
+    ) {
+      const subset = font.defSubset || "latin";
+      if (font.variants[boldWeight].normal[subset]?.url?.woff2) {
+        files.bold = font.variants[boldWeight].normal[subset].url.woff2;
+      }
+    }
+
+    // Bold-italic variant (weight 700, style italic)
+    if (
+      hasBoldItalic &&
+      font.variants[boldWeight] &&
+      font.variants[boldWeight].italic
+    ) {
+      const subset = font.defSubset || "latin";
+      if (font.variants[boldWeight].italic[subset]?.url?.woff2) {
+        files.boldItalic = font.variants[boldWeight].italic[subset].url.woff2;
+      }
+    }
   }
 
-  if (hasBold) {
-    const boldWeight = font.weights?.includes(700)
-      ? 700
-      : font.weights?.includes(600)
-      ? 600
-      : defaultWeight;
-    files.bold = `${cssBaseUrl}:wght@${boldWeight}&display=swap`;
-  }
+  // Fallback to Google Fonts if no direct URLs found
+  if (!files.regular) {
+    const cssBaseUrl = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(
+      font.family,
+    )}`;
+    files.regular = `${cssBaseUrl}&display=swap`;
 
-  if (hasBoldItalic) {
-    const boldWeight = font.weights?.includes(700)
-      ? 700
-      : font.weights?.includes(600)
-      ? 600
-      : defaultWeight;
-    files.boldItalic = `${cssBaseUrl}:ital,wght@1,${boldWeight}&display=swap`;
+    if (hasItalic) {
+      files.italic = `${cssBaseUrl}:ital@1&display=swap`;
+    }
+
+    if (hasBold) {
+      const boldWeightNum = font.weights?.includes(700)
+        ? 700
+        : font.weights?.includes(600)
+        ? 600
+        : defaultWeight;
+      files.bold = `${cssBaseUrl}:wght@${boldWeightNum}&display=swap`;
+    }
+
+    if (hasBoldItalic) {
+      const boldWeightNum = font.weights?.includes(700)
+        ? 700
+        : font.weights?.includes(600)
+        ? 600
+        : defaultWeight;
+      files.boldItalic = `${cssBaseUrl}:ital,wght@1,${boldWeightNum}&display=swap`;
+    }
   }
 
   return {
@@ -316,6 +398,13 @@ export const loadFontsourceFonts = () => {
       preconnect2.href = "https://fonts.gstatic.com";
       preconnect2.crossOrigin = "anonymous";
       document.head.appendChild(preconnect2);
+
+      // Add preconnect for Fontsource CDN
+      const preconnect3 = document.createElement("link");
+      preconnect3.rel = "preconnect";
+      preconnect3.href = "https://cdn.jsdelivr.net";
+      preconnect3.crossOrigin = "anonymous";
+      document.head.appendChild(preconnect3);
     }
 
     // Loop through fontsource fonts and load them in batches
@@ -328,11 +417,111 @@ export const loadFontsourceFonts = () => {
         // Skip if already loaded
         if (loadedFonts.has(font.family)) return;
 
-        // Create a link element for the CSS
-        const link = document.createElement("link");
-        link.href = font.cssUrl || font.files.regular;
-        link.rel = "stylesheet";
-        document.head.appendChild(link);
+        // Check if the font URL is a direct font file URL or a CSS URL
+        const isDirectFontUrl =
+          font.cssUrl?.includes("cdn.jsdelivr.net") ||
+          font.files.regular?.includes("cdn.jsdelivr.net");
+
+        if (isDirectFontUrl) {
+          // Load using FontFace API for direct font URLs
+          try {
+            // Regular style
+            if (font.files.regular) {
+              const fontFace = new FontFace(
+                font.family,
+                `url(${font.files.regular})`,
+                { weight: "400", style: "normal" },
+              );
+              fontFace
+                .load()
+                .then((loadedFace) => {
+                  document.fonts.add(loadedFace);
+                })
+                .catch((err) => {
+                  console.error(
+                    `Failed to load font: ${font.family} regular`,
+                    err,
+                  );
+                });
+            }
+
+            // Italic style
+            if (font.files.italic) {
+              const fontFace = new FontFace(
+                font.family,
+                `url(${font.files.italic})`,
+                { weight: "400", style: "italic" },
+              );
+              fontFace
+                .load()
+                .then((loadedFace) => {
+                  document.fonts.add(loadedFace);
+                })
+                .catch((err) => {
+                  console.error(
+                    `Failed to load font: ${font.family} italic`,
+                    err,
+                  );
+                });
+            }
+
+            // Bold style
+            if (font.files.bold) {
+              const fontFace = new FontFace(
+                font.family,
+                `url(${font.files.bold})`,
+                { weight: "700", style: "normal" },
+              );
+              fontFace
+                .load()
+                .then((loadedFace) => {
+                  document.fonts.add(loadedFace);
+                })
+                .catch((err) => {
+                  console.error(
+                    `Failed to load font: ${font.family} bold`,
+                    err,
+                  );
+                });
+            }
+
+            // Bold-italic style
+            if (font.files.boldItalic) {
+              const fontFace = new FontFace(
+                font.family,
+                `url(${font.files.boldItalic})`,
+                { weight: "700", style: "italic" },
+              );
+              fontFace
+                .load()
+                .then((loadedFace) => {
+                  document.fonts.add(loadedFace);
+                })
+                .catch((err) => {
+                  console.error(
+                    `Failed to load font: ${font.family} bold-italic`,
+                    err,
+                  );
+                });
+            }
+          } catch (err) {
+            console.error(
+              `Error loading font ${font.family} with FontFace API, falling back to CSS`,
+              err,
+            );
+            // Fall back to CSS link method
+            const link = document.createElement("link");
+            link.href = font.cssUrl || font.files.regular;
+            link.rel = "stylesheet";
+            document.head.appendChild(link);
+          }
+        } else {
+          // Use CSS link method for Google Fonts URLs
+          const link = document.createElement("link");
+          link.href = font.cssUrl || font.files.regular;
+          link.rel = "stylesheet";
+          document.head.appendChild(link);
+        }
 
         // Mark as loaded
         loadedFonts.add(font.family);
@@ -413,27 +602,23 @@ if (typeof window !== "undefined") {
       .then((fonts) => {
         if (fonts.length > 0) {
           console.log(`Loaded ${fonts.length} Fontsource API fonts`);
+
+          // Clear the font cache to ensure the UI updates with the new fonts
+          clearFontCache("all");
+          clearFontCache("provider_fontSource");
+          clearFontCache("fontSource_0_999999");
+
+          // Emit event for components to update
+          emitFontProviderEvent("fontProviderUpdated", {
+            provider: "fontSource",
+            count: fonts.length,
+          });
         }
       })
       .catch((error) => {
         console.error("Error loading Fontsource API fonts:", error);
       });
   }, 500);
-}
-
-export interface FontsourceAPIFont {
-  family: string;
-  id: string;
-  subsets: string[];
-  weights: number[];
-  styles: string[];
-  unicodeRange?: string;
-  defSubset: string;
-  variable?: boolean;
-  lastModified: string;
-  category: string;
-  version: string;
-  type: string;
 }
 
 export async function fetchFontsourceAPIFonts(): Promise<Font[]> {

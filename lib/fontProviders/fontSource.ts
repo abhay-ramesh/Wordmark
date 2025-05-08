@@ -1,4 +1,6 @@
 import { FontItem } from "@/lib/fonts";
+import { emitFontProviderEvent } from "./events";
+import { clearFontCache } from "./index";
 
 /**
  * Fontsource API integration
@@ -19,6 +21,19 @@ export interface FontsourceApiItem {
   version: string;
   license: string;
   type: string;
+  variants?: {
+    [weight: string]: {
+      [style: string]: {
+        [subset: string]: {
+          url: {
+            woff2: string;
+            woff: string;
+            ttf: string;
+          };
+        };
+      };
+    };
+  };
 }
 
 // Extended files interface to handle Fontsource fonts
@@ -74,6 +89,7 @@ export const fetchFontsourceFonts = async (): Promise<FontsourceItem[]> => {
     if (responseCache.apiData) {
       data = responseCache.apiData;
     } else {
+      console.log("Fetching fonts from FontSource API...");
       const response = await fetch(API_ENDPOINT, {
         headers: {
           Accept: "application/json",
@@ -94,6 +110,22 @@ export const fetchFontsourceFonts = async (): Promise<FontsourceItem[]> => {
 
       // Store in cache
       responseCache.apiData = data;
+
+      // Debug: Check if any fonts have variants
+      const fontsWithVariants = data.filter((font) => font.variants);
+      console.log(
+        `Found ${fontsWithVariants.length} out of ${data.length} fonts with variants property`,
+      );
+
+      if (fontsWithVariants.length > 0) {
+        // Log example variant structure
+        const sampleFont = fontsWithVariants[0];
+        console.log(
+          `Sample font variant structure for ${sampleFont.family}:`,
+          JSON.stringify(sampleFont.variants, null, 2).substring(0, 300) +
+            "...",
+        );
+      }
     }
 
     console.log(`Processing ${data.length} fonts from Fontsource API`);
@@ -103,6 +135,19 @@ export const fetchFontsourceFonts = async (): Promise<FontsourceItem[]> => {
 
     // Store processed fonts in cache
     responseCache.processedFonts = processedFonts;
+
+    // Debug: Check if any processed fonts have direct URLs
+    const fontsWithDirectUrls = processedFonts.filter(
+      (font) =>
+        font.files.regular && font.files.regular.includes("cdn.jsdelivr.net"),
+    );
+    console.log(
+      `Found ${fontsWithDirectUrls.length} out of ${processedFonts.length} processed fonts with direct URLs`,
+    );
+
+    if (fontsWithDirectUrls.length > 0) {
+      console.log(`Sample direct URL: ${fontsWithDirectUrls[0].files.regular}`);
+    }
 
     return processedFonts;
   } catch (error) {
@@ -170,36 +215,87 @@ const createFontItem = (font: FontsourceApiItem): FontsourceItem => {
     ? font.weights[0]
     : 400;
 
-  // Generate CSS URLs for different variants
-  const cssBaseUrl = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(
-    font.family,
-  )}`;
-
   // Files for different variants
   const files: FontsourceFiles = {
-    regular: `${cssBaseUrl}&display=swap`,
+    regular: "", // Will be populated if font.variants is available
   };
 
-  if (hasItalic) {
-    files.italic = `${cssBaseUrl}:ital@1&display=swap`;
+  // Check if font has variants with direct URLs
+  if (font.variants) {
+    // Regular variant (weight 400, style normal)
+    if (font.variants["400"] && font.variants["400"].normal) {
+      const subset = font.defSubset || "latin";
+      if (font.variants["400"].normal[subset]?.url?.woff2) {
+        files.regular = font.variants["400"].normal[subset].url.woff2;
+      }
+    }
+
+    // Italic variant (weight 400, style italic)
+    if (hasItalic && font.variants["400"] && font.variants["400"].italic) {
+      const subset = font.defSubset || "latin";
+      if (font.variants["400"].italic[subset]?.url?.woff2) {
+        files.italic = font.variants["400"].italic[subset].url.woff2;
+      }
+    }
+
+    // Bold variant (weight 700, style normal)
+    const boldWeight = font.weights?.includes(700)
+      ? "700"
+      : font.weights?.includes(600)
+      ? "600"
+      : "400";
+    if (
+      hasBold &&
+      font.variants[boldWeight] &&
+      font.variants[boldWeight].normal
+    ) {
+      const subset = font.defSubset || "latin";
+      if (font.variants[boldWeight].normal[subset]?.url?.woff2) {
+        files.bold = font.variants[boldWeight].normal[subset].url.woff2;
+      }
+    }
+
+    // Bold-italic variant (weight 700, style italic)
+    if (
+      hasBoldItalic &&
+      font.variants[boldWeight] &&
+      font.variants[boldWeight].italic
+    ) {
+      const subset = font.defSubset || "latin";
+      if (font.variants[boldWeight].italic[subset]?.url?.woff2) {
+        files.boldItalic = font.variants[boldWeight].italic[subset].url.woff2;
+      }
+    }
   }
 
-  if (hasBold) {
-    const boldWeight = font.weights?.includes(700)
-      ? 700
-      : font.weights?.includes(600)
-      ? 600
-      : defaultWeight;
-    files.bold = `${cssBaseUrl}:wght@${boldWeight}&display=swap`;
-  }
+  // Fallback to Google Fonts if no direct URLs found
+  if (!files.regular) {
+    const cssBaseUrl = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(
+      font.family,
+    )}`;
+    files.regular = `${cssBaseUrl}&display=swap`;
 
-  if (hasBoldItalic) {
-    const boldWeight = font.weights?.includes(700)
-      ? 700
-      : font.weights?.includes(600)
-      ? 600
-      : defaultWeight;
-    files.boldItalic = `${cssBaseUrl}:ital,wght@1,${boldWeight}&display=swap`;
+    if (hasItalic) {
+      files.italic = `${cssBaseUrl}:ital@1&display=swap`;
+    }
+
+    if (hasBold) {
+      const boldWeightNum = font.weights?.includes(700)
+        ? 700
+        : font.weights?.includes(600)
+        ? 600
+        : defaultWeight;
+      files.bold = `${cssBaseUrl}:wght@${boldWeightNum}&display=swap`;
+    }
+
+    if (hasBoldItalic) {
+      const boldWeightNum = font.weights?.includes(700)
+        ? 700
+        : font.weights?.includes(600)
+        ? 600
+        : defaultWeight;
+      files.boldItalic = `${cssBaseUrl}:ital,wght@1,${boldWeightNum}&display=swap`;
+    }
   }
 
   return {
@@ -290,13 +386,117 @@ export const loadFontsourceFonts = () => {
         preconnect2.href = "https://fonts.gstatic.com";
         preconnect2.crossOrigin = "anonymous";
         document.head.appendChild(preconnect2);
+
+        // Add preconnect for fontsource CDN
+        const preconnect3 = document.createElement("link");
+        preconnect3.rel = "preconnect";
+        preconnect3.href = "https://cdn.jsdelivr.net";
+        preconnect3.crossOrigin = "anonymous";
+        document.head.appendChild(preconnect3);
       }
 
-      // Create a link element for the CSS
-      const link = document.createElement("link");
-      link.href = font.cssUrl || font.files.regular;
-      link.rel = "stylesheet";
-      document.head.appendChild(link);
+      // Check if the font URL is a direct font file URL or a CSS URL
+      const isDirectFontUrl =
+        font.cssUrl?.includes("cdn.jsdelivr.net") ||
+        font.files.regular?.includes("cdn.jsdelivr.net");
+
+      if (isDirectFontUrl) {
+        // Load using FontFace API for direct font URLs
+        try {
+          // Regular style
+          if (font.files.regular) {
+            const fontFace = new FontFace(
+              font.family,
+              `url(${font.files.regular})`,
+              { weight: "400", style: "normal" },
+            );
+            fontFace
+              .load()
+              .then((loadedFace) => {
+                document.fonts.add(loadedFace);
+              })
+              .catch((err) => {
+                console.error(
+                  `Failed to load font: ${font.family} regular`,
+                  err,
+                );
+              });
+          }
+
+          // Italic style
+          if (font.files.italic) {
+            const fontFace = new FontFace(
+              font.family,
+              `url(${font.files.italic})`,
+              { weight: "400", style: "italic" },
+            );
+            fontFace
+              .load()
+              .then((loadedFace) => {
+                document.fonts.add(loadedFace);
+              })
+              .catch((err) => {
+                console.error(
+                  `Failed to load font: ${font.family} italic`,
+                  err,
+                );
+              });
+          }
+
+          // Bold style
+          if (font.files.bold) {
+            const fontFace = new FontFace(
+              font.family,
+              `url(${font.files.bold})`,
+              { weight: "700", style: "normal" },
+            );
+            fontFace
+              .load()
+              .then((loadedFace) => {
+                document.fonts.add(loadedFace);
+              })
+              .catch((err) => {
+                console.error(`Failed to load font: ${font.family} bold`, err);
+              });
+          }
+
+          // Bold-italic style
+          if (font.files.boldItalic) {
+            const fontFace = new FontFace(
+              font.family,
+              `url(${font.files.boldItalic})`,
+              { weight: "700", style: "italic" },
+            );
+            fontFace
+              .load()
+              .then((loadedFace) => {
+                document.fonts.add(loadedFace);
+              })
+              .catch((err) => {
+                console.error(
+                  `Failed to load font: ${font.family} bold-italic`,
+                  err,
+                );
+              });
+          }
+        } catch (err) {
+          console.error(
+            `Error loading font ${font.family} with FontFace API, falling back to CSS`,
+            err,
+          );
+          // Fall back to CSS link method
+          const link = document.createElement("link");
+          link.href = font.cssUrl || font.files.regular;
+          link.rel = "stylesheet";
+          document.head.appendChild(link);
+        }
+      } else {
+        // Use CSS link method for Google Fonts URLs
+        const link = document.createElement("link");
+        link.href = font.cssUrl || font.files.regular;
+        link.rel = "stylesheet";
+        document.head.appendChild(link);
+      }
 
       // Mark as loaded
       loadedFontsSet.add(font.family);
@@ -328,6 +528,14 @@ if (typeof window !== "undefined") {
         if (fonts.length > 0) {
           fontsourceList = fonts;
           console.log(`Loaded ${fonts.length} Fontsource fonts`);
+
+          // Clear the font cache to ensure the UI updates with the new fonts
+          clearFontCache("all");
+          clearFontCache("provider_fontSource");
+          clearFontCache("fontSource_0_999999");
+
+          // Emit event for components to update
+          emitFontProviderEvent("fontSourceUpdated", { count: fonts.length });
         }
       })
       .catch((error) => {
