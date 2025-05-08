@@ -1,3 +1,8 @@
+"use client";
+
+import { CommandPalette } from "@/components/CommandPalette";
+import { KeyboardShortcuts } from "@/components/KeyboardShortcuts";
+import { Button } from "@/components/ui/button";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -6,7 +11,11 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Tabs } from "@/components/ui/tabs";
 import { Units } from "@/lib/constants";
-import { Boxes, Github } from "lucide-react";
+import { getAllFontList } from "@/lib/fontProviders";
+import { fontAtom } from "@/lib/statemanager";
+import { useAtom } from "jotai";
+import { Boxes, Github, Keyboard } from "lucide-react";
+import { useCallback, useState } from "react";
 import { CardTab, IconTab, LayoutTab, MenuList, TextTab } from "./_tabs";
 import { DisplayCard } from "./DisplayCard";
 import { DownloadButton } from "./DownloadButton";
@@ -16,10 +25,42 @@ import { VersionHistoryWrapper } from "./VersionHistoryWrapper";
 export type UnitType = (typeof Units)[number];
 
 export default function Home() {
+  // Command palette state
+  const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
+  const [_, setSelectedFont] = useAtom(fontAtom);
+
+  // Select a random font function
+  const selectRandomFont = useCallback(() => {
+    // Get all fonts
+    const allFonts = getAllFontList();
+
+    if (allFonts.length > 0) {
+      // Select a random font from the list
+      const randomIndex = Math.floor(Math.random() * allFonts.length);
+      const randomFont = allFonts[randomIndex];
+
+      // Set it as selected font
+      setSelectedFont(randomFont);
+    }
+  }, [setSelectedFont]);
+
   return (
     <div className="relative flex min-h-screen flex-col-reverse justify-end space-y-2 space-y-reverse p-4 md:h-screen md:space-y-0">
       {/* Invisible DownloadButton to initialize the download handler */}
       <DownloadButton invisible />
+
+      {/* Keyboard shortcuts */}
+      <KeyboardShortcuts
+        onRandomFont={selectRandomFont}
+        onOpenCommandPalette={() => setCommandPaletteOpen(true)}
+      />
+
+      {/* Command palette */}
+      <CommandPalette
+        open={commandPaletteOpen}
+        onOpenChange={setCommandPaletteOpen}
+        onRandomFont={selectRandomFont}
+      />
 
       {/* Desktop View - Resizable Layout */}
       <div className="hidden w-full md:block md:h-full">
@@ -37,14 +78,16 @@ export default function Home() {
                     Wordmark.
                   </span>
                 </div>
-                <div className="mt-1 text-xs text-muted-foreground">
-                  Created by{" "}
-                  <a
-                    href="https://github.com/abhay-ramesh"
-                    className="text-primary hover:underline"
-                  >
-                    Abhay Ramesh
-                  </a>
+                <div className="mt-1 flex items-center text-xs text-muted-foreground">
+                  <span>
+                    Created by{" "}
+                    <a
+                      href="https://github.com/abhay-ramesh"
+                      className="text-primary hover:underline"
+                    >
+                      Abhay Ramesh
+                    </a>
+                  </span>
                 </div>
               </div>
 
@@ -75,7 +118,7 @@ export default function Home() {
                 <div className="flex flex-col items-center justify-center gap-4">
                   <DisplayCard />
 
-                  <RandomFontButton />
+                  <RandomFontButton onRandomFont={selectRandomFont} />
                 </div>
               </div>
               <VersionHistoryWrapper />
@@ -93,14 +136,28 @@ export default function Home() {
               Wordmark.
             </span>
           </div>
-          <div className="mt-1 text-xs text-muted-foreground">
-            Created by{" "}
-            <a
-              href="https://github.com/abhay-ramesh"
-              className="text-primary hover:underline"
+          <div className="mt-1 flex items-center justify-center text-xs text-muted-foreground">
+            <span>
+              Created by{" "}
+              <a
+                href="https://github.com/abhay-ramesh"
+                className="text-primary hover:underline"
+              >
+                Abhay Ramesh
+              </a>
+            </span>
+            <span className="mx-2">•</span>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-6 gap-1.5 px-2 text-xs text-muted-foreground"
+              onClick={() => setCommandPaletteOpen(true)}
             >
-              Abhay Ramesh
-            </a>
+              <Keyboard className="h-3.5 w-3.5" />
+              <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100">
+                ⌘K
+              </kbd>
+            </Button>
           </div>
         </div>
 
@@ -124,7 +181,7 @@ export default function Home() {
             <DisplayCard />
           </div>
           <div className="mt-2">
-            <RandomFontButton />
+            <RandomFontButton onRandomFont={selectRandomFont} />
           </div>
           <VersionHistoryWrapper />
         </div>

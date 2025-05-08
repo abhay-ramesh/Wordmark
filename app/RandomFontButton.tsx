@@ -1,44 +1,29 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { getAllFontList } from "@/lib/fontProviders";
-import { fontAtom } from "@/lib/statemanager";
 import { cn } from "@/lib/utils";
-import { useAtom } from "jotai";
 import { Loader2, Shuffle } from "lucide-react";
 import { useCallback, useState } from "react";
 
-export function RandomFontButton() {
-  const [selectedFont, setSelectedFont] = useAtom(fontAtom);
+interface RandomFontButtonProps {
+  onRandomFont?: () => void;
+}
+
+export function RandomFontButton({ onRandomFont }: RandomFontButtonProps) {
   const [randomizing, setRandomizing] = useState(false);
   const [hovered, setHovered] = useState(false);
 
-  // Get all fonts from all providers for random selection
-  const getAllProviderFonts = useCallback(() => {
-    // Get all available fonts for randomization
-    return getAllFontList();
-  }, []);
-
-  // Select a random font
-  const selectRandomFont = useCallback(() => {
-    // Get all provider fonts to have the complete list
-    const allProviderFonts = getAllProviderFonts();
-
-    if (allProviderFonts.length > 0) {
-      // Show randomizing animation
+  // Handle randomization
+  const handleRandomize = useCallback(() => {
+    if (onRandomFont) {
       setRandomizing(true);
 
       // Small timeout to allow animation to show
       setTimeout(() => {
-        // Select a random font from the list
-        const randomIndex = Math.floor(Math.random() * allProviderFonts.length);
-        const randomFont = allProviderFonts[randomIndex];
-
-        // Set it as selected font
-        setSelectedFont(randomFont);
+        onRandomFont();
         setRandomizing(false);
       }, 300);
     }
-  }, [getAllProviderFonts, setSelectedFont]);
+  }, [onRandomFont]);
 
   return (
     <Button
@@ -48,7 +33,7 @@ export function RandomFontButton() {
         "relative flex items-center gap-1.5 overflow-hidden bg-gradient-to-r from-primary/80 to-primary px-4 shadow-md transition-all duration-300",
         hovered ? "shadow-lg" : "",
       )}
-      onClick={selectRandomFont}
+      onClick={handleRandomize}
       disabled={randomizing}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
