@@ -15,11 +15,11 @@ export function TextTab() {
   return (
     <TabsContent
       value="text"
-      className="overflow-hidden flex-1 p-0 mt-0 h-full"
+      className="mt-0 h-full flex-1 overflow-hidden p-0"
     >
-      <div className="flex flex-col h-full">
+      <div className="flex h-full flex-col">
         {/* Text Content and Styling Section */}
-        <div className="flex flex-col flex-none gap-4 p-4 border-b">
+        <div className="flex flex-none flex-col gap-4 border-b p-4">
           {/* Text Content Section */}
           <SectionHeader
             title="Text Content"
@@ -78,14 +78,15 @@ export function TextTab() {
         </div>
 
         {/* Font Selection Section */}
-        <div className="flex overflow-hidden flex-col flex-1 min-h-0">
-          <div className="flex-none p-3 border-b">
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+          <div className="flex-none border-b p-3">
             <SectionHeader
               title="Font Selection"
-              description="Choose a font family from the available providers"
+              description="Choose a font family to use in your design"
+              icon={Type}
             />
           </div>
-          <div className="overflow-hidden flex-1">
+          <div className="flex-1 overflow-hidden">
             <FontSelector />
           </div>
         </div>

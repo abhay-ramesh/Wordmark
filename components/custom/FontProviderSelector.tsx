@@ -1,6 +1,12 @@
 "use client";
 
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   getAvailableProviders,
   loadFontsByProvider,
@@ -24,13 +30,13 @@ interface FontProviderSelectorProps {
 
 // Provider display names
 const providerNames = {
-  google: "Google",
-  adobe: "Adobe",
+  google: "Google Fonts",
+  adobe: "Adobe Fonts",
   fontSquirrel: "Font Squirrel",
-  custom: "Custom",
+  custom: "Custom Fonts",
   fontSource: "Fontsource",
   openFoundry: "Open Foundry",
-  all: "All",
+  all: "All Fonts",
 };
 
 export function FontProviderSelector({
@@ -78,30 +84,18 @@ export function FontProviderSelector({
 
   return (
     <div className={className}>
-      <Tabs
-        defaultValue={activeProvider}
-        className="w-full"
-        onValueChange={handleProviderChange}
-      >
-        <TabsList
-          className="grid h-8 w-full bg-muted/50 p-0.5"
-          style={{
-            gridTemplateColumns: `repeat(${
-              availableProviders.length || 1
-            }, 1fr)`,
-          }}
-        >
+      <Select value={activeProvider} onValueChange={handleProviderChange}>
+        <SelectTrigger className="h-9 bg-background/70">
+          <SelectValue placeholder="Select font provider" />
+        </SelectTrigger>
+        <SelectContent>
           {availableProviders.map((provider) => (
-            <TabsTrigger
-              key={provider}
-              value={provider}
-              className="h-7 px-2 text-xs data-[state=active]:bg-background data-[state=active]:shadow-none"
-            >
+            <SelectItem key={provider} value={provider}>
               {providerNames[provider as keyof typeof providerNames]}
-            </TabsTrigger>
+            </SelectItem>
           ))}
-        </TabsList>
-      </Tabs>
+        </SelectContent>
+      </Select>
     </div>
   );
 }
