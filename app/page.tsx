@@ -10,6 +10,7 @@ import { Boxes, Github } from "lucide-react";
 import { CardTab, IconTab, LayoutTab, MenuList, TextTab } from "./_tabs";
 import { DisplayCard } from "./DisplayCard";
 import { DownloadButton } from "./DownloadButton";
+import { RandomFontButton } from "./RandomFontButton";
 import { VersionHistoryWrapper } from "./VersionHistoryWrapper";
 
 export type UnitType = (typeof Units)[number];
@@ -70,8 +71,12 @@ export default function Home() {
           {/* Preview Panel */}
           <ResizablePanel defaultSize={60}>
             <div className="flex h-full w-full flex-col items-center justify-center bg-background p-4">
-              <div className="flex flex-1 items-center justify-center">
-                <DisplayCard />
+              <div className="flex flex-1 flex-col items-center justify-center">
+                <div className="flex flex-col items-center justify-center gap-4">
+                  <DisplayCard />
+
+                  <RandomFontButton />
+                </div>
               </div>
               <VersionHistoryWrapper />
             </div>
@@ -117,6 +122,9 @@ export default function Home() {
         <div className="relative mt-2 flex h-1/3 w-full flex-col items-center justify-center rounded-lg border p-4">
           <div className="flex w-full flex-1 items-center justify-center">
             <DisplayCard />
+          </div>
+          <div className="mt-2">
+            <RandomFontButton />
           </div>
           <VersionHistoryWrapper />
         </div>
