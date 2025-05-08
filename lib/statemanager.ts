@@ -46,6 +46,10 @@ export const textAtom = atom<{
   text: string;
   color: IColor;
   size: number;
+  lineHeight: number;
+  letterSpacing: number;
+  fontWeight: string;
+  textTransform: "none" | "uppercase" | "lowercase" | "capitalize";
 }>({
   text: "Wordmark.",
   color: {
@@ -64,6 +68,10 @@ export const textAtom = atom<{
     },
   },
   size: 24,
+  lineHeight: 1.2,
+  letterSpacing: 0,
+  fontWeight: "regular",
+  textTransform: "none",
 });
 
 export const iconAtom = atom<{

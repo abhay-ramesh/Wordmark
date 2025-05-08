@@ -34,6 +34,10 @@ export interface DesignVersion {
     text: string;
     color: IColor;
     size: number;
+    lineHeight: number;
+    letterSpacing: number;
+    fontWeight: string;
+    textTransform: "none" | "uppercase" | "lowercase" | "capitalize";
   };
   font?: FontItem;
   icon: {

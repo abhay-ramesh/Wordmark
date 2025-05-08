@@ -89,6 +89,10 @@ export function DisplayCard() {
                 color: textState.color.hex,
                 fontFamily: selectedFont?.family || undefined,
                 fontSize: textState.size + "px",
+                lineHeight: textState.lineHeight,
+                letterSpacing: textState.letterSpacing + "px",
+                fontWeight: textState.fontWeight,
+                textTransform: textState.textTransform,
               }}
               onBlur={(e) => {
                 setTextState((prev) => ({

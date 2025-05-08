@@ -63,7 +63,7 @@ const utilityItems = [
     icon: <MessageCircle size={18} />,
     tooltip: "Give feedback",
     action: "link",
-    href: "https://github.com/Abhay2611/wordmark/issues",
+    href: "https://github.com/abhay-ramesh/wordmark/issues",
   },
   {
     icon: <Download size={18} />,
@@ -80,9 +80,9 @@ const utilityItems = [
 
 export const MenuList = () => {
   return (
-    <TabsList className="flex flex-col justify-between px-1 w-full rounded-none border-b shadow-sm backdrop-blur-sm transition-all duration-300 h-fit bg-background/40 sm:rounded-l-md sm:rounded-r-none md:h-full md:w-fit md:border-b-0 md:border-r">
+    <TabsList className="flex h-fit w-full flex-col justify-between rounded-none border-b bg-background/40 px-1 shadow-sm backdrop-blur-sm transition-all duration-300 sm:rounded-l-md sm:rounded-r-none md:h-full md:w-fit md:border-b-0 md:border-r">
       {/* Main menu items */}
-      <div className="flex justify-evenly py-1 w-full md:flex-col md:space-y-1">
+      <div className="flex w-full justify-evenly py-1 md:flex-col md:space-y-1">
         <TooltipProvider delayDuration={200}>
           {menuItems.map((item, id) => (
             <div key={id} className="flex-1 md:py-0.5">
@@ -122,19 +122,19 @@ export const MenuList = () => {
       </div>
 
       {/* Separator between main menu and utility buttons */}
-      <Separator className="hidden mx-auto my-1 w-10 opacity-30 md:block" />
+      <Separator className="mx-auto my-1 hidden w-10 opacity-30 md:block" />
 
       {/* Utility buttons */}
       <div className="hidden w-full md:flex md:flex-col md:pb-2">
         <TooltipProvider delayDuration={200}>
-          <div className="flex flex-col items-center mt-1 space-y-1">
+          <div className="mt-1 flex flex-col items-center space-y-1">
             {utilityItems.map((item, idx) => (
-              <div key={idx} className="flex justify-center w-full">
+              <div key={idx} className="flex w-full justify-center">
                 {item.action === "dropdown" ? (
                   <DropdownMenu>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <DropdownMenuTrigger className="flex justify-center items-center w-9 h-9 rounded-lg transition-all duration-200 text-muted-foreground hover:bg-accent/20 hover:text-foreground">
+                        <DropdownMenuTrigger className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-all duration-200 hover:bg-accent/20 hover:text-foreground">
                           {item.icon}
                         </DropdownMenuTrigger>
                       </TooltipTrigger>
@@ -149,7 +149,7 @@ export const MenuList = () => {
                     <DropdownMenuContent
                       align="center"
                       side="right"
-                      className="backdrop-blur-sm bg-background/90"
+                      className="bg-background/90 backdrop-blur-sm"
                     >
                       {["PNG", "SVG", "JPEG"].map((format, i) => (
                         <DropdownMenuItem
@@ -174,12 +174,12 @@ export const MenuList = () => {
                           href={item.href}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex justify-center items-center w-9 h-9 rounded-lg transition-all duration-200 text-muted-foreground hover:bg-accent/20 hover:text-foreground"
+                          className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-all duration-200 hover:bg-accent/20 hover:text-foreground"
                         >
                           {item.icon}
                         </a>
                       ) : (
-                        <div className="flex justify-center items-center w-9 h-9 rounded-lg transition-all duration-200 text-muted-foreground hover:bg-accent/20 hover:text-foreground">
+                        <div className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-all duration-200 hover:bg-accent/20 hover:text-foreground">
                           {item.icon}
                         </div>
                       )}
