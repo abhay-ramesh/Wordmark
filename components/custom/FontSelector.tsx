@@ -50,7 +50,6 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
     fontAtom,
   );
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchAll, setSearchAll] = useState(false);
   const [showSampleText, setShowSampleText] = useState(false);
   const [loading, setLoading] = useState(false);
   const textState = useAtomValue(textAtom);
@@ -86,7 +85,7 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
 
       // Invalidate the query to force a refetch
       queryClient.invalidateQueries({
-        queryKey: ["fonts", activeProvider, searchTerm, searchAll],
+        queryKey: ["fonts", activeProvider, searchTerm],
       });
     });
 
@@ -98,7 +97,7 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
 
       // Invalidate the query to force a refetch
       queryClient.invalidateQueries({
-        queryKey: ["fonts", activeProvider, searchTerm, searchAll],
+        queryKey: ["fonts", activeProvider, searchTerm],
       });
     });
 
@@ -110,7 +109,7 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
 
       // Invalidate the query to force a refetch
       queryClient.invalidateQueries({
-        queryKey: ["fonts", activeProvider, searchTerm, searchAll],
+        queryKey: ["fonts", activeProvider, searchTerm],
       });
     });
 
@@ -120,7 +119,7 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
       unsubscribe2();
       unsubscribe3();
     };
-  }, [activeProvider, searchTerm, searchAll, queryClient]);
+  }, [activeProvider, searchTerm, queryClient]);
 
   // Fuse.js options for fuzzy search
   const fuseOptions = {
@@ -132,14 +131,14 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
   // React Query for infinite loading
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
     useInfiniteQuery({
-      queryKey: ["fonts", activeProvider, searchTerm, searchAll],
+      queryKey: ["fonts", activeProvider, searchTerm],
       queryFn: async ({ pageParam = 0 }) => {
         setLoading(true);
         try {
-          // Get appropriate font list based on provider and search settings
+          // Get appropriate font list based on provider
           let fonts: ExtendedFontItem[] = [];
 
-          if (activeProvider === "all" || searchAll) {
+          if (activeProvider === "all") {
             fonts = getAllFontList();
           } else {
             fonts = getFontsByProvider(activeProvider);
@@ -220,7 +219,7 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
     }
 
     return status;
-  }, [allFonts.length, totalFonts, searchTerm, searchAll]);
+  }, [allFonts.length, totalFonts, searchTerm]);
 
   const clearSearch = () => {
     setSearchTerm("");
@@ -282,46 +281,29 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
           />
         </div>
 
-        {/* Search Options and Font Display Options */}
+        {/* Font Display Options */}
         <div className="flex items-center justify-between text-xs">
-          {/* Search scope option */}
+          {/* Font display options */}
           <div className="flex items-center gap-1.5 text-muted-foreground">
             <Switch
-              id="search-all-toggle"
-              checked={searchAll}
-              onCheckedChange={setSearchAll}
+              id="preview-toggle"
+              checked={showSampleText}
+              onCheckedChange={setShowSampleText}
               className="scale-75"
             />
-            <Label htmlFor="search-all-toggle" className="cursor-pointer">
-              Search across all providers
+            <Label
+              htmlFor="preview-toggle"
+              className="flex cursor-pointer items-center gap-1"
+            >
+              {showSampleText ? "Preview text" : "Font names only"}
             </Label>
           </div>
 
-          {/* Font display options */}
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5">
-              <Switch
-                id="preview-toggle"
-                checked={showSampleText}
-                onCheckedChange={setShowSampleText}
-                className="scale-75"
-              />
-              <Label
-                htmlFor="preview-toggle"
-                className="flex cursor-pointer items-center gap-1 text-muted-foreground"
-              >
-                {showSampleText ? "Preview text" : "Font names only"}
-              </Label>
-            </div>
-          </div>
+          {/* Font count info - moved to right side */}
+          {allFonts.length > 0 && (
+            <div className="text-xs text-muted-foreground">{fontCountInfo}</div>
+          )}
         </div>
-
-        {/* Font count info */}
-        {allFonts.length > 0 && (
-          <div className="text-right text-xs text-muted-foreground">
-            {fontCountInfo}
-          </div>
-        )}
       </div>
 
       {/* Font List */}
