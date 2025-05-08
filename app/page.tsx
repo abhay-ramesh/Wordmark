@@ -99,7 +99,7 @@ export default function Home() {
           </div>
         </div>
 
-        <aside className="mt-2 flex h-2/3 w-full flex-col">
+        <aside className="mt-2 flex max-h-[calc(100vh-300px)] w-full flex-col overflow-hidden">
           <Tabs
             orientation="vertical"
             defaultValue="text"

@@ -193,8 +193,8 @@ export function TextTab() {
               icon={Type}
             />
           </div>
-          <div className="flex-1 overflow-hidden">
-            <FontSelector />
+          <div className="flex-1 overflow-auto">
+            <FontSelector className="max-h-96" />
           </div>
         </div>
       </div>

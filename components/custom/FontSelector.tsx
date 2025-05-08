@@ -650,7 +650,9 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
   };
 
   return (
-    <div className={cn("flex h-full w-full flex-col", className)}>
+    <div
+      className={cn("flex h-full w-full flex-col overflow-hidden", className)}
+    >
       {/* Unified Search and Provider Selection */}
       <div className="flex-none space-y-2 border-b p-3">
         {/* Search Input and Provider selector in a single row */}
