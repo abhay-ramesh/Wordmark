@@ -43,6 +43,8 @@ export function TextTab() {
     <TabsContent
       value="text"
       className="mt-0 h-full flex-1 overflow-y-auto p-0"
+      // thin scrollbar
+      style={{ scrollbarWidth: "thin" }}
     >
       <div className="flex flex-col">
         <div className="flex flex-col gap-4 border-b p-4">

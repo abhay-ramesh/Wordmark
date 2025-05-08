@@ -80,38 +80,47 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
   const queryClient = useQueryClient();
 
   // Available font categories
-  const fontCategories = [
-    { value: "all", label: "All Categories" },
-    { value: "serif", label: "Serif" },
-    { value: "sans-serif", label: "Sans Serif" },
-    { value: "monospace", label: "Monospace" },
-    { value: "display", label: "Display" },
-    { value: "handwriting", label: "Handwriting" },
-    { value: "script", label: "Script" },
-    { value: "decorative", label: "Decorative" },
-    { value: "slab-serif", label: "Slab Serif" },
-    { value: "blackletter", label: "Blackletter" },
-  ];
+  const fontCategories = useMemo(
+    () => [
+      { value: "all", label: "All Categories" },
+      { value: "serif", label: "Serif" },
+      { value: "sans-serif", label: "Sans Serif" },
+      { value: "monospace", label: "Monospace" },
+      { value: "display", label: "Display" },
+      { value: "handwriting", label: "Handwriting" },
+      { value: "script", label: "Script" },
+      { value: "decorative", label: "Decorative" },
+      { value: "slab-serif", label: "Slab Serif" },
+      { value: "blackletter", label: "Blackletter" },
+    ],
+    [],
+  );
 
   // Font weights
-  const fontWeights = [
-    { value: "all", label: "All Weights" },
-    { value: "thin", label: "Thin" },
-    { value: "light", label: "Light" },
-    { value: "regular", label: "Regular" },
-    { value: "medium", label: "Medium" },
-    { value: "semibold", label: "Semibold" },
-    { value: "bold", label: "Bold" },
-    { value: "extrabold", label: "Extra Bold" },
-    { value: "black", label: "Black" },
-  ];
+  const fontWeights = useMemo(
+    () => [
+      { value: "all", label: "All Weights" },
+      { value: "thin", label: "Thin" },
+      { value: "light", label: "Light" },
+      { value: "regular", label: "Regular" },
+      { value: "medium", label: "Medium" },
+      { value: "semibold", label: "Semibold" },
+      { value: "bold", label: "Bold" },
+      { value: "extrabold", label: "Extra Bold" },
+      { value: "black", label: "Black" },
+    ],
+    [],
+  );
 
   // Font styles
-  const fontStyles = [
-    { value: "all", label: "All Styles" },
-    { value: "normal", label: "Normal" },
-    { value: "italic", label: "Italic" },
-  ];
+  const fontStyles = useMemo(
+    () => [
+      { value: "all", label: "All Styles" },
+      { value: "normal", label: "Normal" },
+      { value: "italic", label: "Italic" },
+    ],
+    [],
+  );
 
   // Provider display names for formatting
   const providerNames: Record<string, string> = {
@@ -193,61 +202,70 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
   }, [activeProvider]);
 
   // Category mappings for different provider naming conventions
-  const categoryMappings: Record<string, string[]> = {
-    serif: [
-      "serif",
-      "oldstyle",
-      "transitional",
-      "didone",
-      "slab serif",
-      "clarendon",
-      "slab-serif",
-      "antique",
-    ],
-    "sans-serif": [
-      "sans-serif",
-      "sans serif",
-      "grotesque",
-      "neo-grotesque",
-      "geometric",
-      "humanist",
-    ],
-    monospace: [
-      "monospace",
-      "mono",
-      "fixed-width",
-      "code",
-      "console",
-      "typewriter",
-    ],
-    display: [
-      "display",
-      "decorative",
-      "fancy",
-      "title",
-      "poster",
-      "headline",
-      "wood type",
-    ],
-    handwriting: [
-      "handwriting",
-      "script",
-      "hand",
-      "brush",
-      "calligraphy",
-      "cursive",
-    ],
-    script: ["script", "brush script", "calligraphy", "handwritten"],
-    decorative: ["decorative", "display", "fancy", "ornamental", "novelty"],
-    "slab-serif": [
-      "slab-serif",
-      "slab serif",
-      "egyptian",
-      "clarendon",
-      "mechanical",
-    ],
-    blackletter: ["blackletter", "gothic", "old english", "fraktur", "textura"],
-  };
+  const categoryMappings: Record<string, string[]> = useMemo(
+    () => ({
+      serif: [
+        "serif",
+        "oldstyle",
+        "transitional",
+        "didone",
+        "slab serif",
+        "clarendon",
+        "slab-serif",
+        "antique",
+      ],
+      "sans-serif": [
+        "sans-serif",
+        "sans serif",
+        "grotesque",
+        "neo-grotesque",
+        "geometric",
+        "humanist",
+      ],
+      monospace: [
+        "monospace",
+        "mono",
+        "fixed-width",
+        "code",
+        "console",
+        "typewriter",
+      ],
+      display: [
+        "display",
+        "decorative",
+        "fancy",
+        "title",
+        "poster",
+        "headline",
+        "wood type",
+      ],
+      handwriting: [
+        "handwriting",
+        "script",
+        "hand",
+        "brush",
+        "calligraphy",
+        "cursive",
+      ],
+      script: ["script", "brush script", "calligraphy", "handwritten"],
+      decorative: ["decorative", "display", "fancy", "ornamental", "novelty"],
+      "slab-serif": [
+        "slab-serif",
+        "slab serif",
+        "egyptian",
+        "clarendon",
+        "mechanical",
+      ],
+      blackletter: [
+        "blackletter",
+        "gothic",
+        "old english",
+        "fraktur",
+        "textura",
+      ],
+    }),
+    [],
+  );
 
   // React Query for infinite loading
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
