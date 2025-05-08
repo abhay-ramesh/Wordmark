@@ -74,11 +74,60 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
   const [weightFilter, setWeightFilter] = useState<string>("all");
   const [styleFilter, setStyleFilter] = useState<string>("all");
   const [showFilters, setShowFilters] = useState(false);
+  // Add open state for each filter select
+  const [categoryOpen, setCategoryOpen] = useState(false);
+  const [weightOpen, setWeightOpen] = useState(false);
+  const [styleOpen, setStyleOpen] = useState(false);
 
   const [hasMoreFonts, setHasMoreFonts] = useState(true);
   const [allProviders, setAllProviders] = useState<string[]>([]);
   const fontContainerRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
+
+  // Available font categories
+  const fontCategories = [
+    { value: "all", label: "All Categories" },
+    { value: "serif", label: "Serif" },
+    { value: "sans-serif", label: "Sans Serif" },
+    { value: "monospace", label: "Monospace" },
+    { value: "display", label: "Display" },
+    { value: "handwriting", label: "Handwriting" },
+    { value: "script", label: "Script" },
+    { value: "decorative", label: "Decorative" },
+    { value: "slab-serif", label: "Slab Serif" },
+    { value: "blackletter", label: "Blackletter" },
+  ];
+
+  // Font weights
+  const fontWeights = [
+    { value: "all", label: "All Weights" },
+    { value: "thin", label: "Thin" },
+    { value: "light", label: "Light" },
+    { value: "regular", label: "Regular" },
+    { value: "medium", label: "Medium" },
+    { value: "semibold", label: "Semibold" },
+    { value: "bold", label: "Bold" },
+    { value: "extrabold", label: "Extra Bold" },
+    { value: "black", label: "Black" },
+  ];
+
+  // Font styles
+  const fontStyles = [
+    { value: "all", label: "All Styles" },
+    { value: "normal", label: "Normal" },
+    { value: "italic", label: "Italic" },
+  ];
+
+  // Provider display names for formatting
+  const providerNames: Record<string, string> = {
+    google: "Google Fonts",
+    adobe: "Adobe Fonts",
+    fontSquirrel: "Font Squirrel",
+    custom: "Custom Fonts",
+    fontSource: "Fontsource",
+    openFoundry: "Open Foundry",
+    all: "All Fonts",
+  };
 
   // Get sample text - use typed text if available, otherwise use placeholder
   const sampleText = useMemo(() => {
@@ -147,20 +196,6 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
     setWeightFilter("all");
     setStyleFilter("all");
   }, [activeProvider]);
-
-  // Available font categories
-  const fontCategories = [
-    { value: "all", label: "All Categories" },
-    { value: "serif", label: "Serif" },
-    { value: "sans-serif", label: "Sans Serif" },
-    { value: "monospace", label: "Monospace" },
-    { value: "display", label: "Display" },
-    { value: "handwriting", label: "Handwriting" },
-    { value: "script", label: "Script" },
-    { value: "decorative", label: "Decorative" },
-    { value: "slab-serif", label: "Slab Serif" },
-    { value: "blackletter", label: "Blackletter" },
-  ];
 
   // Category mappings for different provider naming conventions
   const categoryMappings: Record<string, string[]> = {
@@ -389,6 +424,165 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
     return data?.pages[0]?.totalCount || 0;
   }, [data]);
 
+  // Get all fonts from all providers for accurate counting
+  const getAllProviderFonts = useCallback((): ExtendedFontItem[] => {
+    let allProviderFonts: ExtendedFontItem[] = [];
+
+    // Get fonts from each provider directly (not filtered by search)
+    if (activeProvider === "all") {
+      // Combine fonts from all providers
+      allProviderFonts = getAllFontList();
+    } else {
+      // Get fonts only from the selected provider
+      allProviderFonts = getFontsByProvider(activeProvider);
+    }
+
+    return allProviderFonts;
+  }, [activeProvider]);
+
+  // Calculate category counts from total data
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = {
+      all: 0, // Will be updated with total count
+    };
+
+    // Initialize counts for all categories
+    fontCategories.forEach((cat) => {
+      if (cat.value !== "all") {
+        counts[cat.value] = 0;
+      }
+    });
+
+    // Get all provider fonts for accurate counting
+    const allProviderFonts = getAllProviderFonts();
+    counts.all = allProviderFonts.length;
+
+    // Count fonts in each category
+    allProviderFonts.forEach((font) => {
+      // Check each category mapping
+      Object.entries(categoryMappings).forEach(([category, mappings]) => {
+        // Check if font category matches any mapping
+        if (
+          mappings.includes(font.category?.toLowerCase() || "") ||
+          mappings.some((m) =>
+            font.family.toLowerCase().includes(m.toLowerCase()),
+          )
+        ) {
+          counts[category] = (counts[category] || 0) + 1;
+        }
+      });
+
+      // If the font didn't match any mapping, increment counts for its actual category
+      if (
+        font.category &&
+        !Object.keys(categoryMappings).some((cat) =>
+          categoryMappings[cat].includes(font.category?.toLowerCase() || ""),
+        )
+      ) {
+        counts[font.category] = (counts[font.category] || 0) + 1;
+      }
+    });
+
+    return counts;
+  }, [getAllProviderFonts, fontCategories, categoryMappings]);
+
+  // Calculate weight counts from total data
+  const weightCounts = useMemo(() => {
+    const counts: Record<string, number> = {
+      all: 0, // Will be updated with total count
+    };
+
+    // Initialize counts for all weights
+    fontWeights.forEach((weight) => {
+      if (weight.value !== "all") {
+        counts[weight.value] = 0;
+      }
+    });
+
+    // Get all provider fonts for accurate counting
+    const allProviderFonts = getAllProviderFonts();
+    counts.all = allProviderFonts.length;
+
+    // Define weight mappings
+    const weightVariantMap: Record<string, string[]> = {
+      thin: ["100", "200", "thin", "extralight", "hairline", "ultra-thin"],
+      light: ["300", "light"],
+      regular: ["400", "regular", "normal", "book", "text", "roman"],
+      medium: ["500", "medium"],
+      semibold: ["600", "semibold", "demibold", "semi-bold", "demi-bold"],
+      bold: ["700", "bold", "strong"],
+      extrabold: ["800", "extrabold", "extra-bold", "ultra-bold", "heavy"],
+      black: ["900", "black", "heavy", "ultra", "ultra-black", "fat", "poster"],
+    };
+
+    // Count fonts for each weight
+    allProviderFonts.forEach((font) => {
+      Object.entries(weightVariantMap).forEach(([weight, terms]) => {
+        // Check variants
+        const hasMatchingVariant = font.variants.some((v) =>
+          terms.some((term) => v.toLowerCase().includes(term.toLowerCase())),
+        );
+
+        // Check family name
+        const familyIncludesWeight = terms.some((term) =>
+          font.family.toLowerCase().includes(term.toLowerCase()),
+        );
+
+        if (hasMatchingVariant || familyIncludesWeight) {
+          counts[weight] = (counts[weight] || 0) + 1;
+        }
+      });
+    });
+
+    return counts;
+  }, [getAllProviderFonts, fontWeights]);
+
+  // Calculate style counts from total data
+  const styleCounts = useMemo(() => {
+    const counts: Record<string, number> = {
+      all: 0, // Will be updated with total count
+    };
+
+    // Initialize counts for all styles
+    fontStyles.forEach((style) => {
+      if (style.value !== "all") {
+        counts[style.value] = 0;
+      }
+    });
+
+    // Get all provider fonts for accurate counting
+    const allProviderFonts = getAllProviderFonts();
+    counts.all = allProviderFonts.length;
+
+    // Define style mappings
+    const styleVariantMap: Record<string, string[]> = {
+      normal: ["normal", "regular", "roman", "upright"],
+      italic: ["italic", "oblique", "slanted"],
+    };
+
+    // Count fonts for each style
+    allProviderFonts.forEach((font) => {
+      Object.entries(styleVariantMap).forEach(([style, terms]) => {
+        // Check variants
+        const hasVariant = font.variants.some((v) =>
+          terms.some((term) => v.toLowerCase().includes(term.toLowerCase())),
+        );
+
+        // Check family name
+        const familyName = font.family.toLowerCase();
+        const familyHasStyle = terms.some((term) =>
+          familyName.includes(term.toLowerCase()),
+        );
+
+        if (hasVariant || familyHasStyle) {
+          counts[style] = (counts[style] || 0) + 1;
+        }
+      });
+    });
+
+    return counts;
+  }, [getAllProviderFonts, fontStyles]);
+
   // Reset state when provider changes
   useEffect(() => {
     setHasMoreFonts(true);
@@ -447,26 +641,6 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
       );
     }
   };
-
-  // Font weights
-  const fontWeights = [
-    { value: "all", label: "All Weights" },
-    { value: "thin", label: "Thin" },
-    { value: "light", label: "Light" },
-    { value: "regular", label: "Regular" },
-    { value: "medium", label: "Medium" },
-    { value: "semibold", label: "Semibold" },
-    { value: "bold", label: "Bold" },
-    { value: "extrabold", label: "Extra Bold" },
-    { value: "black", label: "Black" },
-  ];
-
-  // Font styles
-  const fontStyles = [
-    { value: "all", label: "All Styles" },
-    { value: "normal", label: "Normal" },
-    { value: "italic", label: "Italic" },
-  ];
 
   // Clear all filters
   const clearFilters = () => {
@@ -563,7 +737,11 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
         {/* Font Filters (collapsible) */}
         {showFilters && (
           <div className="space-y-2 rounded-md bg-muted/30 p-2 pt-1.5">
-            <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+            <div className="flex flex-wrap gap-2">
+              <div className="mb-1 w-full text-xs text-muted-foreground">
+                Filter fonts by category, weight, and style. Numbers show total
+                available fonts.
+              </div>
               {/* Category filter */}
               <div className="flex flex-col gap-1">
                 <Label className="flex items-center gap-1 text-xs text-muted-foreground">
@@ -577,6 +755,8 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
                 <Select
                   value={categoryFilter}
                   onValueChange={setCategoryFilter}
+                  open={categoryOpen}
+                  onOpenChange={setCategoryOpen}
                 >
                   <SelectTrigger className="h-7 w-full text-xs">
                     <SelectValue placeholder="Select category" />
@@ -588,11 +768,24 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
                         value={category.value}
                         className="text-xs"
                       >
-                        {category.label}
+                        <span className="flex w-full justify-between">
+                          {category.label}
+                          {categoryOpen && (
+                            <span className="ml-2 text-xs text-muted-foreground">
+                              {categoryCounts[category.value] || 0}
+                            </span>
+                          )}
+                        </span>
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
+                {categoryFilter !== "all" && (
+                  <div className="mt-0.5 text-[10px] text-muted-foreground">
+                    Showing {allFonts.length} of{" "}
+                    {categoryCounts[categoryFilter] || 0} fonts
+                  </div>
+                )}
               </div>
 
               {/* Weight filter */}
@@ -605,7 +798,12 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
                     </span>
                   )}
                 </Label>
-                <Select value={weightFilter} onValueChange={setWeightFilter}>
+                <Select
+                  value={weightFilter}
+                  onValueChange={setWeightFilter}
+                  open={weightOpen}
+                  onOpenChange={setWeightOpen}
+                >
                   <SelectTrigger className="h-7 w-full text-xs">
                     <SelectValue placeholder="Select weight" />
                   </SelectTrigger>
@@ -616,11 +814,24 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
                         value={weight.value}
                         className="text-xs"
                       >
-                        {weight.label}
+                        <span className="flex w-full justify-between">
+                          {weight.label}
+                          {weightOpen && (
+                            <span className="ml-2 text-xs text-muted-foreground">
+                              {weightCounts[weight.value] || 0}
+                            </span>
+                          )}
+                        </span>
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
+                {weightFilter !== "all" && (
+                  <div className="mt-0.5 text-[10px] text-muted-foreground">
+                    Showing {allFonts.length} of{" "}
+                    {weightCounts[weightFilter] || 0} fonts
+                  </div>
+                )}
               </div>
 
               {/* Style filter */}
@@ -633,7 +844,12 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
                     </span>
                   )}
                 </Label>
-                <Select value={styleFilter} onValueChange={setStyleFilter}>
+                <Select
+                  value={styleFilter}
+                  onValueChange={setStyleFilter}
+                  open={styleOpen}
+                  onOpenChange={setStyleOpen}
+                >
                   <SelectTrigger className="h-7 w-full text-xs">
                     <SelectValue placeholder="Select style" />
                   </SelectTrigger>
@@ -644,11 +860,24 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
                         value={style.value}
                         className="text-xs"
                       >
-                        {style.label}
+                        <span className="flex w-full justify-between">
+                          {style.label}
+                          {styleOpen && (
+                            <span className="ml-2 text-xs text-muted-foreground">
+                              {styleCounts[style.value] || 0}
+                            </span>
+                          )}
+                        </span>
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
+                {styleFilter !== "all" && (
+                  <div className="mt-0.5 text-[10px] text-muted-foreground">
+                    Showing {allFonts.length} of {styleCounts[styleFilter] || 0}{" "}
+                    fonts
+                  </div>
+                )}
               </div>
             </div>
 
@@ -831,17 +1060,6 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
     </div>
   );
 }
-
-// Declare providerNames for formatting display names
-const providerNames = {
-  google: "Google Fonts",
-  adobe: "Adobe Fonts",
-  fontSquirrel: "Font Squirrel",
-  custom: "Custom Fonts",
-  fontSource: "Fontsource",
-  openFoundry: "Open Foundry",
-  all: "All Fonts",
-};
 
 // Export both as named export and default export
 export const FontSelector = FontSelectorComponent;
