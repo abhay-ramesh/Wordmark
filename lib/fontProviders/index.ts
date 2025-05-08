@@ -11,6 +11,11 @@ import {
   loadFontSquirrelFonts,
   loadMoreFontSquirrelFonts,
 } from "./fontSquirrel";
+import {
+  getOpenFoundrySubset,
+  loadOpenFoundryFonts,
+  openFoundryList,
+} from "./openFoundry";
 
 // Extend the base FontItem to include provider info
 export interface ExtendedFontItem extends FontItem {
@@ -20,7 +25,8 @@ export interface ExtendedFontItem extends FontItem {
     | "fontSquirrel"
     | "custom"
     | "fontSource"
-    | "fontsource";
+    | "fontsource"
+    | "openFoundry";
 }
 
 // Cache for font lists to avoid recalculations
@@ -51,12 +57,25 @@ const getFontSourceSubsetCached = (
   return fontListCache[cacheKey];
 };
 
+// Get a subset of fonts with caching - openFoundry
+const getOpenFoundrySubsetCached = (
+  start = 0,
+  count = 500,
+): ExtendedFontItem[] => {
+  const cacheKey = `openFoundry_${start}_${count}`;
+  if (!fontListCache[cacheKey]) {
+    fontListCache[cacheKey] = getOpenFoundrySubset(start, count);
+  }
+  return fontListCache[cacheKey];
+};
+
 // Lazily combine all font lists only when needed
 export const getAllFontList = (): ExtendedFontItem[] => {
   if (!fontListCache.all) {
     // Get all fonts from each provider
     const googleFonts = getGoogleFontsWithProvider();
     const fontSourceFonts = getFontSourceSubsetCached(0, 999999);
+    const openFoundryFonts = getOpenFoundrySubsetCached(0, 999999);
 
     fontListCache.all = [
       ...googleFonts,
@@ -64,6 +83,7 @@ export const getAllFontList = (): ExtendedFontItem[] => {
       ...fontSquirrelList,
       ...customFontList,
       ...fontSourceFonts,
+      ...openFoundryFonts,
     ];
   }
 
@@ -76,6 +96,7 @@ const loadedProviders = {
   fontSquirrel: false,
   custom: false,
   fontSource: false,
+  openFoundry: false,
 };
 
 // Load fonts for a specific provider on demand
@@ -102,6 +123,10 @@ export const loadFontsByProvider = (provider: string): void => {
       loadFontSourceFonts();
       loadedProviders.fontSource = true;
       break;
+    case "openFoundry":
+      loadOpenFoundryFonts();
+      loadedProviders.openFoundry = true;
+      break;
   }
 };
 
@@ -124,8 +149,9 @@ export const loadMoreFontsByProvider = async (
 
       return newCount;
     case "fontSource":
+    case "openFoundry":
       // Currently not supported
-      console.log("Incremental loading not supported for fontSource");
+      console.log(`Incremental loading not supported for ${provider}`);
       return 0;
     default:
       console.log(`Provider ${provider} does not support incremental loading`);
@@ -151,6 +177,7 @@ export const loadAllFonts = () => {
 
       setTimeout(() => {
         loadFontsByProvider("fontSource");
+        loadFontsByProvider("openFoundry");
       }, 300);
     });
   } else {
@@ -165,6 +192,7 @@ export const loadAllFonts = () => {
 
       setTimeout(() => {
         loadFontsByProvider("fontSource");
+        loadFontsByProvider("openFoundry");
       }, 200);
     }, 100);
   }
@@ -174,7 +202,13 @@ export const loadAllFonts = () => {
 
 // Filter fonts by provider - optimized with caching
 export const getFontsByProvider = (
-  provider: "google" | "adobe" | "fontSquirrel" | "custom" | "fontSource",
+  provider:
+    | "google"
+    | "adobe"
+    | "fontSquirrel"
+    | "custom"
+    | "fontSource"
+    | "openFoundry",
 ): ExtendedFontItem[] => {
   const cacheKey = `provider_${provider}`;
 
@@ -191,6 +225,11 @@ export const getFontsByProvider = (
 
   if (provider === "fontSource") {
     fontListCache[cacheKey] = getFontSourceSubsetCached(0, 999999);
+    return fontListCache[cacheKey];
+  }
+
+  if (provider === "openFoundry") {
+    fontListCache[cacheKey] = getOpenFoundrySubsetCached(0, 999999);
     return fontListCache[cacheKey];
   }
 
@@ -225,6 +264,7 @@ export const getAvailableProviders = (): (
   | "fontSquirrel"
   | "custom"
   | "fontSource"
+  | "openFoundry"
 )[] => {
   // Return from cache if available
   if (availableProvidersCache) {
@@ -237,6 +277,7 @@ export const getAvailableProviders = (): (
     | "fontSquirrel"
     | "custom"
     | "fontSource"
+    | "openFoundry"
   )[] = [];
 
   // Only check length, avoid filtering operations
@@ -245,6 +286,7 @@ export const getAvailableProviders = (): (
   if (fontSquirrelList.length > 0) providers.push("fontSquirrel");
   if (customFontList.length > 0) providers.push("custom");
   if (fontSourceList.length > 0) providers.push("fontSource");
+  if (openFoundryList.length > 0) providers.push("openFoundry");
 
   // Cache the result
   availableProvidersCache = providers;

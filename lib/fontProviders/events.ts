@@ -3,7 +3,10 @@
  */
 
 // Event types
-export type FontProviderEventType = "fontSourceUpdated" | "fontProviderUpdated";
+export type FontProviderEventType =
+  | "fontSourceUpdated"
+  | "fontProviderUpdated"
+  | "openFoundryUpdated";
 
 // Callback type for events
 type EventCallback = (data?: any) => void;
@@ -12,6 +15,7 @@ type EventCallback = (data?: any) => void;
 const listeners: Record<FontProviderEventType, EventCallback[]> = {
   fontSourceUpdated: [],
   fontProviderUpdated: [],
+  openFoundryUpdated: [],
 };
 
 /**

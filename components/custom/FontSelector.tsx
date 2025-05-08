@@ -53,7 +53,13 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
   const [loading, setLoading] = useState(false);
   const textState = useAtomValue(textAtom);
   const [activeProvider, setActiveProvider] = useState<
-    "google" | "adobe" | "fontSquirrel" | "custom" | "fontSource" | "all"
+    | "google"
+    | "adobe"
+    | "fontSquirrel"
+    | "custom"
+    | "fontSource"
+    | "openFoundry"
+    | "all"
   >("all");
   const [hasMoreFonts, setHasMoreFonts] = useState(true);
   const [allProviders, setAllProviders] = useState<string[]>([]);
@@ -94,10 +100,23 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
       });
     });
 
+    const unsubscribe3 = onFontProviderEvent("openFoundryUpdated", () => {
+      // Clear cache and refetch
+      clearFontCache("all");
+      clearFontCache(`provider_${activeProvider}`);
+      setAllProviders(getAvailableProviders());
+
+      // Invalidate the query to force a refetch
+      queryClient.invalidateQueries({
+        queryKey: ["fonts", activeProvider, searchTerm, searchAll],
+      });
+    });
+
     // Cleanup
     return () => {
       unsubscribe1();
       unsubscribe2();
+      unsubscribe3();
     };
   }, [activeProvider, searchTerm, searchAll, queryClient]);
 
@@ -219,7 +238,8 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
           | "adobe"
           | "fontSquirrel"
           | "custom"
-          | "fontSource",
+          | "fontSource"
+          | "openFoundry",
       );
     }
   };

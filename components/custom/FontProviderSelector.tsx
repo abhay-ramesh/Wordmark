@@ -29,6 +29,7 @@ const providerNames = {
   fontSquirrel: "Font Squirrel",
   custom: "Custom",
   fontSource: "Fontsource",
+  openFoundry: "Open Foundry",
   all: "All",
 };
 
