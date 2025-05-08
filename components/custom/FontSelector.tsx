@@ -2,6 +2,13 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import {
   Tooltip,
@@ -24,7 +31,7 @@ import { cn } from "@/lib/utils";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import Fuse from "fuse.js";
 import { useAtom, useAtomValue } from "jotai";
-import { Loader2, Search, X } from "lucide-react";
+import { Loader2, Search, SlidersHorizontal, X } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Inter } from "next/font/google";
 import React, {
@@ -62,6 +69,12 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
     | "openFoundry"
     | "all"
   >("all");
+  // Font filtering states
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [weightFilter, setWeightFilter] = useState<string>("all");
+  const [styleFilter, setStyleFilter] = useState<string>("all");
+  const [showFilters, setShowFilters] = useState(false);
+
   const [hasMoreFonts, setHasMoreFonts] = useState(true);
   const [allProviders, setAllProviders] = useState<string[]>([]);
   const fontContainerRef = useRef<HTMLDivElement>(null);
@@ -128,10 +141,95 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
     isCaseSensitive: false,
   };
 
+  // Reset filters when provider changes
+  useEffect(() => {
+    setCategoryFilter("all");
+    setWeightFilter("all");
+    setStyleFilter("all");
+  }, [activeProvider]);
+
+  // Available font categories
+  const fontCategories = [
+    { value: "all", label: "All Categories" },
+    { value: "serif", label: "Serif" },
+    { value: "sans-serif", label: "Sans Serif" },
+    { value: "monospace", label: "Monospace" },
+    { value: "display", label: "Display" },
+    { value: "handwriting", label: "Handwriting" },
+    { value: "script", label: "Script" },
+    { value: "decorative", label: "Decorative" },
+    { value: "slab-serif", label: "Slab Serif" },
+    { value: "blackletter", label: "Blackletter" },
+  ];
+
+  // Category mappings for different provider naming conventions
+  const categoryMappings: Record<string, string[]> = {
+    serif: [
+      "serif",
+      "oldstyle",
+      "transitional",
+      "didone",
+      "slab serif",
+      "clarendon",
+      "slab-serif",
+      "antique",
+    ],
+    "sans-serif": [
+      "sans-serif",
+      "sans serif",
+      "grotesque",
+      "neo-grotesque",
+      "geometric",
+      "humanist",
+    ],
+    monospace: [
+      "monospace",
+      "mono",
+      "fixed-width",
+      "code",
+      "console",
+      "typewriter",
+    ],
+    display: [
+      "display",
+      "decorative",
+      "fancy",
+      "title",
+      "poster",
+      "headline",
+      "wood type",
+    ],
+    handwriting: [
+      "handwriting",
+      "script",
+      "hand",
+      "brush",
+      "calligraphy",
+      "cursive",
+    ],
+    script: ["script", "brush script", "calligraphy", "handwritten"],
+    decorative: ["decorative", "display", "fancy", "ornamental", "novelty"],
+    "slab-serif": [
+      "slab-serif",
+      "slab serif",
+      "egyptian",
+      "clarendon",
+      "mechanical",
+    ],
+    blackletter: ["blackletter", "gothic", "old english", "fraktur", "textura"],
+  };
+
   // React Query for infinite loading
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
     useInfiniteQuery({
-      queryKey: ["fonts", activeProvider, searchTerm],
+      queryKey: [
+        "fonts",
+        activeProvider,
+        searchTerm,
+        categoryFilter,
+        weightFilter,
+        styleFilter,
+      ],
       queryFn: async ({ pageParam = 0 }) => {
         setLoading(true);
         try {
@@ -155,6 +253,111 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
             const fuse = new Fuse(fonts, fuseOptions);
             const result = fuse.search(searchTerm);
             fonts = result.map((item) => item.item);
+          }
+
+          // Apply category filter with improved mapping
+          if (categoryFilter !== "all") {
+            const targetCategories = categoryMappings[categoryFilter] || [
+              categoryFilter,
+            ];
+            fonts = fonts.filter((font) => {
+              // Check explicit category
+              if (targetCategories.includes(font.category?.toLowerCase())) {
+                return true;
+              }
+
+              // Check if family name contains category keywords
+              const familyName = font.family.toLowerCase();
+              return targetCategories.some((cat) =>
+                familyName.includes(cat.toLowerCase()),
+              );
+            });
+          }
+
+          // Apply weight filter (approximate since weights are stored differently by providers)
+          if (weightFilter !== "all") {
+            const weightVariantMap: Record<string, string[]> = {
+              thin: [
+                "100",
+                "200",
+                "thin",
+                "extralight",
+                "hairline",
+                "ultra-thin",
+              ],
+              light: ["300", "light"],
+              regular: ["400", "regular", "normal", "book", "text", "roman"],
+              medium: ["500", "medium"],
+              semibold: [
+                "600",
+                "semibold",
+                "demibold",
+                "semi-bold",
+                "demi-bold",
+              ],
+              bold: ["700", "bold", "strong"],
+              extrabold: [
+                "800",
+                "extrabold",
+                "extra-bold",
+                "ultra-bold",
+                "heavy",
+              ],
+              black: [
+                "900",
+                "black",
+                "heavy",
+                "ultra",
+                "ultra-black",
+                "fat",
+                "poster",
+              ],
+            };
+
+            const targetWeights = weightVariantMap[weightFilter] || [];
+
+            fonts = fonts.filter((font) => {
+              // Check variants directly
+              const hasMatchingVariant = font.variants.some((v) =>
+                targetWeights.some((tw) =>
+                  v.toLowerCase().includes(tw.toLowerCase()),
+                ),
+              );
+
+              // For Google/variable fonts, also check if family name includes weight terms
+              const familyIncludesWeight = targetWeights.some((tw) =>
+                font.family.toLowerCase().includes(tw.toLowerCase()),
+              );
+
+              return hasMatchingVariant || familyIncludesWeight;
+            });
+          }
+
+          // Apply style filter with improved mapping
+          if (styleFilter !== "all") {
+            const styleVariantMap: Record<string, string[]> = {
+              normal: ["normal", "regular", "roman", "upright"],
+              italic: ["italic", "oblique", "slanted"],
+            };
+
+            const targetStyles = styleVariantMap[styleFilter] || [styleFilter];
+
+            fonts = fonts.filter((font) => {
+              // Check for style terms in variants
+              const hasVariant = font.variants.some((v) =>
+                targetStyles.some((ts) =>
+                  v.toLowerCase().includes(ts.toLowerCase()),
+                ),
+              );
+
+              // Check family name for style terms
+              const familyName = font.family.toLowerCase();
+              const familyHasStyle = targetStyles.some((ts) =>
+                familyName.includes(ts.toLowerCase()),
+              );
+
+              return hasVariant || familyHasStyle;
+            });
           }
 
           // Calculate pagination
@@ -245,6 +448,33 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
     }
   };
 
+  // Font weights
+  const fontWeights = [
+    { value: "all", label: "All Weights" },
+    { value: "thin", label: "Thin" },
+    { value: "light", label: "Light" },
+    { value: "regular", label: "Regular" },
+    { value: "medium", label: "Medium" },
+    { value: "semibold", label: "Semibold" },
+    { value: "bold", label: "Bold" },
+    { value: "extrabold", label: "Extra Bold" },
+    { value: "black", label: "Black" },
+  ];
+
+  // Font styles
+  const fontStyles = [
+    { value: "all", label: "All Styles" },
+    { value: "normal", label: "Normal" },
+    { value: "italic", label: "Italic" },
+  ];
+
+  // Clear all filters
+  const clearFilters = () => {
+    setCategoryFilter("all");
+    setWeightFilter("all");
+    setStyleFilter("all");
+  };
+
   return (
     <div className={cn("flex h-full w-full flex-col", className)}>
       {/* Unified Search and Provider Selection */}
@@ -281,7 +511,7 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
           />
         </div>
 
-        {/* Font Display Options */}
+        {/* Font Display Options and Filter Toggle */}
         <div className="flex items-center justify-between text-xs">
           {/* Font display options */}
           <div className="flex items-center gap-1.5 text-muted-foreground">
@@ -299,11 +529,146 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
             </Label>
           </div>
 
-          {/* Font count info - moved to right side */}
-          {allFonts.length > 0 && (
-            <div className="text-xs text-muted-foreground">{fontCountInfo}</div>
-          )}
+          {/* Filter toggle button */}
+          <div className="flex items-center gap-2">
+            <Button
+              variant={showFilters ? "secondary" : "ghost"}
+              size="sm"
+              onClick={() => setShowFilters(!showFilters)}
+              className="flex h-6 items-center px-2 text-xs"
+            >
+              {showFilters ? "Hide filters" : "Filter fonts"}
+              <SlidersHorizontal className="ml-1 h-3 w-3" />
+              {/* Show active filter count badge */}
+              {(categoryFilter !== "all" ||
+                weightFilter !== "all" ||
+                styleFilter !== "all") && (
+                <span className="ml-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] text-primary-foreground">
+                  {(categoryFilter !== "all" ? 1 : 0) +
+                    (weightFilter !== "all" ? 1 : 0) +
+                    (styleFilter !== "all" ? 1 : 0)}
+                </span>
+              )}
+            </Button>
+
+            {/* Font count info */}
+            {allFonts.length > 0 && (
+              <div className="text-xs text-muted-foreground">
+                {fontCountInfo}
+              </div>
+            )}
+          </div>
         </div>
+
+        {/* Font Filters (collapsible) */}
+        {showFilters && (
+          <div className="space-y-2 rounded-md bg-muted/30 p-2 pt-1.5">
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+              {/* Category filter */}
+              <div className="flex flex-col gap-1">
+                <Label className="flex items-center gap-1 text-xs text-muted-foreground">
+                  Category
+                  {categoryFilter !== "all" && (
+                    <span className="ml-1 rounded-sm bg-primary px-1 text-[9px] text-primary-foreground">
+                      ACTIVE
+                    </span>
+                  )}
+                </Label>
+                <Select
+                  value={categoryFilter}
+                  onValueChange={setCategoryFilter}
+                >
+                  <SelectTrigger className="h-7 w-full text-xs">
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {fontCategories.map((category) => (
+                      <SelectItem
+                        key={category.value}
+                        value={category.value}
+                        className="text-xs"
+                      >
+                        {category.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Weight filter */}
+              <div className="flex flex-col gap-1">
+                <Label className="flex items-center gap-1 text-xs text-muted-foreground">
+                  Weight
+                  {weightFilter !== "all" && (
+                    <span className="ml-1 rounded-sm bg-primary px-1 text-[9px] text-primary-foreground">
+                      ACTIVE
+                    </span>
+                  )}
+                </Label>
+                <Select value={weightFilter} onValueChange={setWeightFilter}>
+                  <SelectTrigger className="h-7 w-full text-xs">
+                    <SelectValue placeholder="Select weight" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {fontWeights.map((weight) => (
+                      <SelectItem
+                        key={weight.value}
+                        value={weight.value}
+                        className="text-xs"
+                      >
+                        {weight.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Style filter */}
+              <div className="flex flex-col gap-1">
+                <Label className="flex items-center gap-1 text-xs text-muted-foreground">
+                  Style
+                  {styleFilter !== "all" && (
+                    <span className="ml-1 rounded-sm bg-primary px-1 text-[9px] text-primary-foreground">
+                      ACTIVE
+                    </span>
+                  )}
+                </Label>
+                <Select value={styleFilter} onValueChange={setStyleFilter}>
+                  <SelectTrigger className="h-7 w-full text-xs">
+                    <SelectValue placeholder="Select style" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {fontStyles.map((style) => (
+                      <SelectItem
+                        key={style.value}
+                        value={style.value}
+                        className="text-xs"
+                      >
+                        {style.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* Clear filters button */}
+            {(categoryFilter !== "all" ||
+              weightFilter !== "all" ||
+              styleFilter !== "all") && (
+              <div className="flex justify-end">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={clearFilters}
+                  className="h-6 px-2 text-xs"
+                >
+                  Clear all filters
+                </Button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Font List */}
