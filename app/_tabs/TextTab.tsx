@@ -50,7 +50,6 @@ export function TextTab() {
             title="Text Content"
             icon={Type}
             badge={`${textState.text.length} characters`}
-            description="This text will appear in your design based on the selected layout"
           />
 
           <Input
@@ -67,7 +66,7 @@ export function TextTab() {
           />
 
           <SectionHeader
-            title="Size & Color"
+            title="Typography"
             icon={SlidersHorizontal}
             badge={`${textState.size}px`}
             className="pt-2"
@@ -98,11 +97,7 @@ export function TextTab() {
                 }
               />
             </div>
-          </div>
 
-          <SectionHeader title="Typography" icon={Type} className="pt-2" />
-
-          <div className="grid gap-4">
             <NumberInputWithSlider
               id="line-height"
               label="Line Height"
@@ -185,16 +180,13 @@ export function TextTab() {
           </div>
         </div>
 
-        <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-          <div className="flex-none border-b p-3">
-            <SectionHeader
-              title="Font Selection"
-              description="Choose a font family to use in your design"
-              icon={Type}
-            />
-          </div>
-          <div className="flex-1 overflow-auto">
-            <FontSelector className="max-h-96" />
+        {/* Font Selection - Add minimal header */}
+        <div className="flex flex-1 flex-col overflow-hidden">
+          <div className="border-b p-4">
+            <SectionHeader title="Font Selection" icon={Type} />
+            <div className="overflow-auto">
+              <FontSelector className="max-h-96" />
+            </div>
           </div>
         </div>
       </div>

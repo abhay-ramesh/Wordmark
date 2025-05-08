@@ -10,12 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import {
   clearFontCache,
   ExtendedFontItem,
@@ -654,7 +649,7 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
       className={cn("flex h-full w-full flex-col overflow-hidden", className)}
     >
       {/* Unified Search and Provider Selection */}
-      <div className="flex-none space-y-2 border-b p-3">
+      <div className="flex-none space-y-2 p-2">
         {/* Search Input and Provider selector in a single row */}
         <div className="flex items-center gap-2">
           <div className="relative flex-1">
@@ -665,103 +660,83 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
               id="font-selector"
               type="text"
               placeholder="Search fonts..."
-              className="h-9 border-muted bg-background/70 pl-8 pr-8 text-sm"
-              onChange={(e) => setSearchTerm(e.target.value)}
+              className="h-8 pl-8 pr-8"
               value={searchTerm}
-              aria-label="Search fonts"
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
             {searchTerm && (
               <div className="absolute inset-y-0 right-0 flex items-center pr-2.5">
-                <X
-                  className="h-4 w-4 cursor-pointer text-muted-foreground transition-colors hover:text-foreground"
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-4 w-4 p-0 hover:bg-transparent"
                   onClick={clearSearch}
-                />
+                >
+                  <X className="h-3 w-3" />
+                </Button>
               </div>
             )}
           </div>
-
-          {/* Provider dropdown */}
           <FontProviderSelector
             className="w-[180px] flex-none"
             onChange={handleProviderChange}
           />
         </div>
 
-        {/* Font Display Options and Filter Toggle */}
-        <div className="flex items-center justify-between text-xs">
-          {/* Font display options */}
-          <div className="flex items-center gap-1.5 text-muted-foreground">
-            <Switch
-              id="preview-toggle"
-              checked={showSampleText}
-              onCheckedChange={setShowSampleText}
-              className="scale-75"
-            />
-            <Label
-              htmlFor="preview-toggle"
-              className="flex cursor-pointer items-center gap-1"
-            >
-              {showSampleText ? "Preview text" : "Font names only"}
-            </Label>
-          </div>
-
-          {/* Filter toggle button */}
-          <div className="flex items-center gap-2">
+        {/* Toggles row */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1.5">
             <Button
-              variant={showFilters ? "secondary" : "ghost"}
+              variant={showFilters ? "secondary" : "outline"}
               size="sm"
+              className="h-7 gap-1.5 px-2 text-xs"
               onClick={() => setShowFilters(!showFilters)}
-              className="flex h-6 items-center px-2 text-xs"
             >
-              {showFilters ? "Hide filters" : "Filter fonts"}
-              <SlidersHorizontal className="ml-1 h-3 w-3" />
-              {/* Show active filter count badge */}
-              {(categoryFilter !== "all" ||
-                weightFilter !== "all" ||
-                styleFilter !== "all") && (
-                <span className="ml-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] text-primary-foreground">
-                  {(categoryFilter !== "all" ? 1 : 0) +
-                    (weightFilter !== "all" ? 1 : 0) +
-                    (styleFilter !== "all" ? 1 : 0)}
-                </span>
-              )}
+              <SlidersHorizontal className="h-3.5 w-3.5" />
+              Filters
             </Button>
-
-            {/* Font count info */}
-            {allFonts.length > 0 && (
-              <div className="text-xs text-muted-foreground">
-                {fontCountInfo}
-              </div>
+            {(categoryFilter !== "all" ||
+              weightFilter !== "all" ||
+              styleFilter !== "all") && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-7 gap-1.5 px-2 text-xs"
+                onClick={clearFilters}
+              >
+                Clear
+              </Button>
             )}
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="flex items-center space-x-1.5">
+              <Switch
+                id="sample-text"
+                checked={showSampleText}
+                onCheckedChange={setShowSampleText}
+                className="scale-75"
+              />
+              <Label htmlFor="sample-text" className="text-xs">
+                Preview Text
+              </Label>
+            </div>
           </div>
         </div>
 
         {/* Font Filters (collapsible) */}
         {showFilters && (
-          <div className="space-y-2 rounded-md bg-muted/30 p-2 pt-1.5">
+          <div className="space-y-1.5 rounded-md bg-muted/30 p-2">
             <div className="flex flex-wrap gap-2">
-              <div className="mb-1 w-full text-xs text-muted-foreground">
-                Filter fonts by category, weight, and style. Numbers show total
-                available fonts.
-              </div>
               {/* Category filter */}
               <div className="flex flex-col gap-1">
-                <Label className="flex items-center gap-1 text-xs text-muted-foreground">
-                  Category
-                  {categoryFilter !== "all" && (
-                    <span className="ml-1 rounded-sm bg-primary px-1 text-[9px] text-primary-foreground">
-                      ACTIVE
-                    </span>
-                  )}
-                </Label>
                 <Select
                   value={categoryFilter}
                   onValueChange={setCategoryFilter}
                   open={categoryOpen}
                   onOpenChange={setCategoryOpen}
                 >
-                  <SelectTrigger className="h-7 w-full text-xs">
-                    <SelectValue placeholder="Select category" />
+                  <SelectTrigger className="h-8 w-[140px] text-xs">
+                    <SelectValue placeholder="Category" />
                   </SelectTrigger>
                   <SelectContent>
                     {fontCategories.map((category) => (
@@ -770,44 +745,30 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
                         value={category.value}
                         className="text-xs"
                       >
-                        <span className="flex w-full justify-between">
-                          {category.label}
-                          {categoryOpen && (
-                            <span className="ml-2 text-xs text-muted-foreground">
+                        {category.label}
+                        {categoryOpen &&
+                          category.value !== "all" &&
+                          categoryFilter !== category.value && (
+                            <span className="ml-1 text-xs text-muted-foreground">
                               {categoryCounts[category.value] || 0}
                             </span>
                           )}
-                        </span>
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-                {categoryFilter !== "all" && (
-                  <div className="mt-0.5 text-[10px] text-muted-foreground">
-                    Showing {allFonts.length} of{" "}
-                    {categoryCounts[categoryFilter] || 0} fonts
-                  </div>
-                )}
               </div>
 
               {/* Weight filter */}
               <div className="flex flex-col gap-1">
-                <Label className="flex items-center gap-1 text-xs text-muted-foreground">
-                  Weight
-                  {weightFilter !== "all" && (
-                    <span className="ml-1 rounded-sm bg-primary px-1 text-[9px] text-primary-foreground">
-                      ACTIVE
-                    </span>
-                  )}
-                </Label>
                 <Select
                   value={weightFilter}
                   onValueChange={setWeightFilter}
                   open={weightOpen}
                   onOpenChange={setWeightOpen}
                 >
-                  <SelectTrigger className="h-7 w-full text-xs">
-                    <SelectValue placeholder="Select weight" />
+                  <SelectTrigger className="h-8 w-[140px] text-xs">
+                    <SelectValue placeholder="Weight" />
                   </SelectTrigger>
                   <SelectContent>
                     {fontWeights.map((weight) => (
@@ -816,44 +777,30 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
                         value={weight.value}
                         className="text-xs"
                       >
-                        <span className="flex w-full justify-between">
-                          {weight.label}
-                          {weightOpen && (
-                            <span className="ml-2 text-xs text-muted-foreground">
+                        {weight.label}
+                        {weightOpen &&
+                          weight.value !== "all" &&
+                          weightFilter !== weight.value && (
+                            <span className="ml-1 text-xs text-muted-foreground">
                               {weightCounts[weight.value] || 0}
                             </span>
                           )}
-                        </span>
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-                {weightFilter !== "all" && (
-                  <div className="mt-0.5 text-[10px] text-muted-foreground">
-                    Showing {allFonts.length} of{" "}
-                    {weightCounts[weightFilter] || 0} fonts
-                  </div>
-                )}
               </div>
 
               {/* Style filter */}
               <div className="flex flex-col gap-1">
-                <Label className="flex items-center gap-1 text-xs text-muted-foreground">
-                  Style
-                  {styleFilter !== "all" && (
-                    <span className="ml-1 rounded-sm bg-primary px-1 text-[9px] text-primary-foreground">
-                      ACTIVE
-                    </span>
-                  )}
-                </Label>
                 <Select
                   value={styleFilter}
                   onValueChange={setStyleFilter}
                   open={styleOpen}
                   onOpenChange={setStyleOpen}
                 >
-                  <SelectTrigger className="h-7 w-full text-xs">
-                    <SelectValue placeholder="Select style" />
+                  <SelectTrigger className="h-8 w-[140px] text-xs">
+                    <SelectValue placeholder="Style" />
                   </SelectTrigger>
                   <SelectContent>
                     {fontStyles.map((style) => (
@@ -862,40 +809,27 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
                         value={style.value}
                         className="text-xs"
                       >
-                        <span className="flex w-full justify-between">
-                          {style.label}
-                          {styleOpen && (
-                            <span className="ml-2 text-xs text-muted-foreground">
+                        {style.label}
+                        {styleOpen &&
+                          style.value !== "all" &&
+                          styleFilter !== style.value && (
+                            <span className="ml-1 text-xs text-muted-foreground">
                               {styleCounts[style.value] || 0}
                             </span>
                           )}
-                        </span>
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-                {styleFilter !== "all" && (
-                  <div className="mt-0.5 text-[10px] text-muted-foreground">
-                    Showing {allFonts.length} of {styleCounts[styleFilter] || 0}{" "}
-                    fonts
-                  </div>
-                )}
               </div>
             </div>
 
-            {/* Clear filters button */}
+            {/* Show filtered count if any filter is active */}
             {(categoryFilter !== "all" ||
               weightFilter !== "all" ||
               styleFilter !== "all") && (
-              <div className="flex justify-end">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={clearFilters}
-                  className="h-6 px-2 text-xs"
-                >
-                  Clear all filters
-                </Button>
+              <div className="text-xs text-muted-foreground">
+                Showing {allFonts.length} of {totalFonts} fonts
               </div>
             )}
           </div>
@@ -926,90 +860,72 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
             ) : (
               allFonts.map((font) => (
                 <React.Fragment key={font.family}>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <button
-                        className={cn(
-                          "w-full rounded px-3 py-2 text-left transition-colors",
-                          "hover:bg-accent hover:text-accent-foreground",
-                          selectedFont?.family === font.family
-                            ? "bg-accent text-accent-foreground"
-                            : "bg-transparent",
-                        )}
-                        onClick={() => setSelectedFont(font)}
-                      >
-                        {showSampleText ? (
-                          <div className="flex flex-col gap-0.5">
-                            <span
-                              style={{
-                                fontFamily: font.family,
-                                fontSize: "16px",
-                                lineHeight: "1.2",
-                                display: "block",
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                                maxHeight: "38px",
-                              }}
-                            >
-                              {sampleText}
-                            </span>
-                            <span
-                              className={cn(
-                                "text-xs opacity-70",
-                                selectedFont?.family === font.family
-                                  ? "text-accent-foreground"
-                                  : "text-muted-foreground",
-                              )}
-                            >
-                              {font.family}
-                              {font.provider &&
-                                ` · ${
-                                  providerNames[
-                                    font.provider as keyof typeof providerNames
-                                  ] || font.provider
-                                }`}
-                            </span>
-                          </div>
-                        ) : (
-                          <div className="flex flex-col">
-                            <span
-                              style={{
-                                fontFamily: font.family,
-                                fontSize: "15px",
-                                lineHeight: "1.2",
-                                display: "block",
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                              }}
-                            >
-                              {font.family}
-                            </span>
-                            {font.provider && (
-                              <span className="text-xs text-muted-foreground">
-                                {providerNames[
-                                  font.provider as keyof typeof providerNames
-                                ] || font.provider}
-                              </span>
-                            )}
-                          </div>
-                        )}
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent side="right">
+                  <button
+                    className={cn(
+                      "w-full rounded px-3 py-1.5 text-left transition-colors",
+                      "hover:bg-accent hover:text-accent-foreground",
+                      selectedFont?.family === font.family
+                        ? "bg-accent text-accent-foreground"
+                        : "bg-transparent",
+                    )}
+                    onClick={() => setSelectedFont(font)}
+                  >
+                    {showSampleText ? (
+                      <div className="flex flex-col gap-0.5">
+                        <span
+                          style={{
+                            fontFamily: font.family,
+                            fontSize: "16px",
+                            lineHeight: "1.2",
+                            display: "block",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            maxHeight: "30px",
+                          }}
+                        >
+                          {sampleText}
+                        </span>
+                        <span
+                          className={cn(
+                            "text-xs opacity-70",
+                            selectedFont?.family === font.family
+                              ? "text-accent-foreground"
+                              : "text-muted-foreground",
+                          )}
+                        >
+                          {font.family}
+                          {font.provider &&
+                            ` · ${
+                              providerNames[
+                                font.provider as keyof typeof providerNames
+                              ] || font.provider
+                            }`}
+                        </span>
+                      </div>
+                    ) : (
                       <div className="flex flex-col">
-                        <span className="text-xs font-medium">
+                        <span
+                          style={{
+                            fontFamily: font.family,
+                            fontSize: "15px",
+                            lineHeight: "1.2",
+                            display: "block",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                          }}
+                        >
                           {font.family}
                         </span>
                         {font.provider && (
-                          <span className="text-xs opacity-70">
+                          <span className="text-xs text-muted-foreground">
                             {providerNames[
                               font.provider as keyof typeof providerNames
-                            ] || "Unknown"}
+                            ] || font.provider}
                           </span>
                         )}
                       </div>
-                    </TooltipContent>
-                  </Tooltip>
+                    )}
+                  </button>
                   <FontLoader fonts={[{ font: font.family }]} />
                 </React.Fragment>
               ))
