@@ -71,13 +71,13 @@ fontSquirrelList.push({
   version: "1.0",
   lastModified: "2023-11-01",
   files: {
-    regular: "https://www.fontsquirrel.com/fontfacekit/your-font-name"
+    regular: "https://www.fontsquirrel.com/fontfacekit/your-font-name",
   },
   category: "sans-serif",
   kind: "webfont",
   menu: "",
   provider: "fontSquirrel",
-  kitUrl: "https://www.fontsquirrel.com/fontfacekit/your-font-name"
+  kitUrl: "https://www.fontsquirrel.com/fontfacekit/your-font-name",
 });
 ```
 

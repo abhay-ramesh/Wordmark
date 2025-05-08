@@ -26,7 +26,7 @@ import { cn } from "@/lib/utils";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import Fuse from "fuse.js";
 import { useAtom, useAtomValue } from "jotai";
-import { Loader2, Search, SlidersHorizontal, X } from "lucide-react";
+import { Loader2, Search, Shuffle, SlidersHorizontal, X } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Inter } from "next/font/google";
 import React, {
@@ -54,6 +54,7 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [showSampleText, setShowSampleText] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [randomizing, setRandomizing] = useState(false);
   const textState = useAtomValue(textAtom);
   const [activeProvider, setActiveProvider] = useState<
     | "google"
@@ -662,6 +663,28 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
     setStyleFilter("all");
   };
 
+  // Random font selection
+  const selectRandomFont = useCallback(() => {
+    // Get all provider fonts to have the complete list
+    const allProviderFonts = getAllProviderFonts();
+
+    if (allProviderFonts.length > 0) {
+      // Show randomizing animation
+      setRandomizing(true);
+
+      // Small timeout to allow animation to show
+      setTimeout(() => {
+        // Select a random font from the list
+        const randomIndex = Math.floor(Math.random() * allProviderFonts.length);
+        const randomFont = allProviderFonts[randomIndex];
+
+        // Set it as selected font
+        setSelectedFont(randomFont);
+        setRandomizing(false);
+      }, 300);
+    }
+  }, [getAllProviderFonts, setSelectedFont]);
+
   return (
     <div
       className={cn("flex h-full w-full flex-col overflow-hidden", className)}
@@ -713,6 +736,22 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
               <SlidersHorizontal className="h-3.5 w-3.5" />
               Filters
             </Button>
+            {!selectedFont && (
+              <Button
+                variant="secondary"
+                size="sm"
+                className="h-7 gap-1.5 px-2 text-xs"
+                onClick={selectRandomFont}
+                disabled={randomizing}
+              >
+                {randomizing ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <Shuffle className="h-3.5 w-3.5" />
+                )}
+                <span className="text-xs">Random</span>
+              </Button>
+            )}
             {(categoryFilter !== "all" ||
               weightFilter !== "all" ||
               styleFilter !== "all") && (
@@ -980,14 +1019,31 @@ function FontSelectorComponent({ className }: FontSelectorProps) {
                 </div>
               )}
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-7 px-2 text-xs"
-              onClick={clearSelectedFont}
-            >
-              Clear
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-7 px-2 text-xs"
+                onClick={selectRandomFont}
+                disabled={randomizing}
+                title="Try a random font"
+              >
+                {randomizing ? (
+                  <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                ) : (
+                  <Shuffle className="mr-1 h-3 w-3" />
+                )}
+                Random
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-7 px-2 text-xs"
+                onClick={clearSelectedFont}
+              >
+                Clear
+              </Button>
+            </div>
           </div>
         </div>
       )}
