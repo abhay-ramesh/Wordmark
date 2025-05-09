@@ -1,34 +1,141 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Contributing to Wordmark
 
-## Getting Started
+Thank you for considering contributing to Wordmark! This document provides guidelines and instructions for contributing to this project.
 
-First, run the development server:
+## Table of Contents
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+- [Contributing to Wordmark](#contributing-to-wordmark)
+  - [Table of Contents](#table-of-contents)
+  - [Code of Conduct](#code-of-conduct)
+  - [Development Setup](#development-setup)
+  - [Development Workflow](#development-workflow)
+  - [Pull Request Process](#pull-request-process)
+  - [Coding Standards](#coding-standards)
+  - [Commit Guidelines](#commit-guidelines)
+  - [Feature Requests and Bug Reports](#feature-requests-and-bug-reports)
+
+## Code of Conduct
+
+We expect all contributors to follow our Code of Conduct. Please be respectful and considerate of others when contributing to this project.
+
+## Development Setup
+
+1. Fork the repository
+2. Clone your fork:
+
+   ```bash
+   git clone https://github.com/your-username/wordmark.git
+   cd wordmark
+   ```
+
+3. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+4. Start the development server:
+
+   ```bash
+   npm run dev
+   ```
+
+5. Open [http://localhost:3000](http://localhost:3000) to see the application
+
+## Development Workflow
+
+1. Create a new branch for your feature or bug fix:
+
+   ```bash
+   git checkout -b feature/your-feature-name
+   # or
+   git checkout -b fix/issue-number
+   ```
+
+2. Make your changes, ensuring you follow the [coding standards](#coding-standards)
+
+3. Test your changes thoroughly:
+
+   ```bash
+   npm run lint
+   npm run test
+   ```
+
+4. Commit your changes using [conventional commit messages](#commit-guidelines)
+
+5. Push your changes to your forked repository:
+
+   ```bash
+   git push origin feature/your-feature-name
+   ```
+
+6. Create a pull request against the main repository
+
+## Pull Request Process
+
+1. Ensure your PR title follows the [commit guidelines](#commit-guidelines)
+2. Fill out the PR template with all required information
+3. Link any related issues
+4. Wait for a maintainer to review your PR
+5. Address any requested changes
+6. Once approved, your PR will be merged
+
+## Coding Standards
+
+- Follow TypeScript best practices
+- Format your code using Prettier
+- Use meaningful variable names
+- Write comments for complex logic
+- Follow the existing project structure
+- Use React hooks and functional components
+
+## Commit Guidelines
+
+We use the [Conventional Commits](https://www.conventionalcommits.org/) format for commit messages. Each commit message should have a structured format:
+
+```
+<type>(<scope>): <description>
+
+[optional body]
+
+[optional footer(s)]
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Types include:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **feat**: A new feature
+- **fix**: A bug fix
+- **docs**: Documentation only changes
+- **style**: Changes that do not affect the meaning of the code
+- **refactor**: A code change that neither fixes a bug nor adds a feature
+- **perf**: A code change that improves performance
+- **test**: Adding missing tests or correcting existing tests
+- **chore**: Changes to the build process or auxiliary tools
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Example commit messages:
 
-## Learn More
+```
+feat(fonts): add support for Font Squirrel
 
-To learn more about Next.js, take a look at the following resources:
+    - Add support for Font Squirrel
+    - Add support for Adobe Fonts
+    - Add support for Google Fonts
+    - Add support for Font Source
+    - Add support for Open Foundry
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+fix(download): fix download issues
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+    - Fix JPEG export quality
+    - Fix PNG export quality
+    - Fix SVG export quality
+    - Fix PDF export quality
+    - Fix JPG export quality
+```
 
-## Deploy on Vercel
+## Feature Requests and Bug Reports
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+If you'd like to request a feature or report a bug, please use the GitHub issue tracker. Be sure to check existing issues before creating a new one.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+---
+
+Thank you for contributing to Wordmark! We appreciate your help in making this project better.
