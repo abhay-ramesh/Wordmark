@@ -133,7 +133,11 @@ export default function Home() {
                     <RandomFontButton onRandomFont={selectRandomFont} />
                     <DropdownMenu>
                       <DropdownMenuTrigger className="" asChild>
-                        <Button variant="outline" disabled={isLoading}>
+                        <Button
+                          variant="outline"
+                          disabled={isLoading}
+                          className="flex gap-1.5"
+                        >
                           {isLoading ? (
                             <Loader2 size={18} className="mr-1 animate-spin" />
                           ) : (
@@ -211,7 +215,11 @@ export default function Home() {
               <RandomFontButton onRandomFont={selectRandomFont} />
               <DropdownMenu>
                 <DropdownMenuTrigger className="" asChild>
-                  <Button variant="outline" disabled={isLoading}>
+                  <Button
+                    variant="outline"
+                    disabled={isLoading}
+                    className="flex gap-1.5"
+                  >
                     {isLoading ? (
                       <Loader2 size={18} className="mr-1 animate-spin" />
                     ) : (
