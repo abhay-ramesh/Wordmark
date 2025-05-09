@@ -20,11 +20,15 @@ import { Units } from "@/lib/constants";
 import { getAllFontList } from "@/lib/fontProviders";
 import { fontAtom } from "@/lib/statemanager";
 import { useAtom } from "jotai";
-import { Boxes, Download, Github } from "lucide-react";
+import { Boxes, Download, Github, Loader2 } from "lucide-react";
 import { useCallback, useState } from "react";
 import { CardTab, IconTab, LayoutTab, MenuList, TextTab } from "./_tabs";
 import { DisplayCard } from "./DisplayCard";
-import { DownloadButton, downloadHandler } from "./DownloadButton";
+import {
+  DownloadButton,
+  downloadHandler,
+  useDownloadStore,
+} from "./DownloadButton";
 import { RandomFontButton } from "./RandomFontButton";
 import { VersionHistoryWrapper } from "./VersionHistoryWrapper";
 
@@ -34,6 +38,7 @@ export default function Home() {
   // Command palette state
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [_, setSelectedFont] = useAtom(fontAtom);
+  const { isLoading, currentFormat } = useDownloadStore();
 
   // Select a random font function
   const selectRandomFont = useCallback(() => {
@@ -128,9 +133,15 @@ export default function Home() {
                     <RandomFontButton onRandomFont={selectRandomFont} />
                     <DropdownMenu>
                       <DropdownMenuTrigger className="" asChild>
-                        <Button variant="outline">
-                          <Download size={18} />
-                          <span className="text-sm font-medium">Download</span>
+                        <Button variant="outline" disabled={isLoading}>
+                          {isLoading ? (
+                            <Loader2 size={18} className="mr-1 animate-spin" />
+                          ) : (
+                            <Download size={18} />
+                          )}
+                          <span className="text-sm font-medium">
+                            {isLoading ? "Processing..." : "Download"}
+                          </span>
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent
@@ -145,8 +156,16 @@ export default function Home() {
                                 format.toLowerCase() as any,
                               )
                             }
-                            className="cursor-pointer px-3 py-1.5 text-xs transition-colors hover:bg-accent/20"
+                            className="cursor-pointer px-3 py-1.5 text-xs transition-colors hover:bg-accent/20 disabled:cursor-not-allowed disabled:opacity-50"
+                            disabled={isLoading}
                           >
+                            {isLoading &&
+                            currentFormat === format.toLowerCase() ? (
+                              <Loader2
+                                size={14}
+                                className="mr-1 animate-spin"
+                              />
+                            ) : null}
                             {format}
                           </DropdownMenuItem>
                         ))}
@@ -192,9 +211,15 @@ export default function Home() {
               <RandomFontButton onRandomFont={selectRandomFont} />
               <DropdownMenu>
                 <DropdownMenuTrigger className="" asChild>
-                  <Button variant="outline">
-                    <Download size={18} />
-                    <span className="text-sm font-medium">Download</span>
+                  <Button variant="outline" disabled={isLoading}>
+                    {isLoading ? (
+                      <Loader2 size={18} className="mr-1 animate-spin" />
+                    ) : (
+                      <Download size={18} />
+                    )}
+                    <span className="text-sm font-medium">
+                      {isLoading ? "Processing..." : "Download"}
+                    </span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
@@ -207,8 +232,12 @@ export default function Home() {
                       onClick={() =>
                         downloadHandler.download(format.toLowerCase() as any)
                       }
-                      className="cursor-pointer px-3 py-1.5 text-xs transition-colors hover:bg-accent/20"
+                      className="cursor-pointer px-3 py-1.5 text-xs transition-colors hover:bg-accent/20 disabled:cursor-not-allowed disabled:opacity-50"
+                      disabled={isLoading}
                     >
+                      {isLoading && currentFormat === format.toLowerCase() ? (
+                        <Loader2 size={14} className="mr-1 animate-spin" />
+                      ) : null}
                       {format}
                     </DropdownMenuItem>
                   ))}

@@ -1,5 +1,5 @@
 "use client";
-import { downloadHandler } from "@/app/DownloadButton";
+import { downloadHandler, useDownloadStore } from "@/app/DownloadButton";
 import { ShortcutsHelp } from "@/components/ShortcutsHelp";
 import {
   DropdownMenu,
@@ -22,6 +22,7 @@ import {
   Image as ImageIcon,
   Keyboard,
   Layout,
+  Loader2,
   MessageCircle,
   Square,
   Type,
@@ -87,6 +88,8 @@ const utilityItems = [
 ];
 
 export const MenuList = () => {
+  const { isLoading, currentFormat } = useDownloadStore();
+
   return (
     <TabsList className="flex h-fit w-full flex-col justify-between rounded-none border-b bg-background/40 px-1 shadow-sm backdrop-blur-sm transition-all duration-300 sm:rounded-l-md sm:rounded-r-none md:h-full md:w-fit md:border-b-0 md:border-r">
       {/* Main menu items */}
@@ -142,8 +145,15 @@ export const MenuList = () => {
                   <DropdownMenu>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <DropdownMenuTrigger className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-all duration-200 hover:bg-accent/20 hover:text-foreground">
-                          {item.icon}
+                        <DropdownMenuTrigger
+                          className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-all duration-200 hover:bg-accent/20 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                          disabled={isLoading}
+                        >
+                          {isLoading ? (
+                            <Loader2 size={18} className="animate-spin" />
+                          ) : (
+                            item.icon
+                          )}
                         </DropdownMenuTrigger>
                       </TooltipTrigger>
                       <TooltipContent
@@ -151,7 +161,7 @@ export const MenuList = () => {
                         align="center"
                         className="max-w-[200px] bg-background/90 text-xs backdrop-blur-sm"
                       >
-                        {item.tooltip}
+                        {isLoading ? "Processing download..." : item.tooltip}
                       </TooltipContent>
                     </Tooltip>
                     <DropdownMenuContent
@@ -167,8 +177,13 @@ export const MenuList = () => {
                               format.toLowerCase() as any,
                             )
                           }
-                          className="cursor-pointer px-3 py-1.5 text-xs transition-colors hover:bg-accent/20"
+                          className="cursor-pointer px-3 py-1.5 text-xs transition-colors hover:bg-accent/20 disabled:cursor-not-allowed disabled:opacity-50"
+                          disabled={isLoading}
                         >
+                          {isLoading &&
+                          currentFormat === format.toLowerCase() ? (
+                            <Loader2 size={14} className="mr-1 animate-spin" />
+                          ) : null}
                           {format}
                         </DropdownMenuItem>
                       ))}
