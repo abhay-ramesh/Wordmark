@@ -1,83 +1,68 @@
 "use client";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
-import { TabsContent } from "@/components/ui/tabs";
-import { ColorPicker } from "react-color-palette";
-import { IconSelector } from "@/components/icons/IconSelector";
+import { ColorPickerField } from "@/components/custom/ColorPickerField";
+import { NumberInputWithSlider } from "@/components/custom/NumberInputWithSlider";
+import { SectionHeader } from "@/components/custom/SectionHeader";
 import { LucideIconType } from "@/components/icons";
-import { useAtom } from "jotai";
+import { IconSelector } from "@/components/icons/IconSelector";
+import { TabsContent } from "@/components/ui/tabs";
 import { iconAtom } from "@/lib/statemanager";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
+import { useAtom } from "jotai";
+import { Image, SlidersHorizontal } from "lucide-react";
 
 export function IconTab() {
   const [icon, setIcon] = useAtom(iconAtom);
   return (
-    <TabsContent value="icon" className="w-full space-y-4 overflow-y-auto p-3">
-      {/* Pick Icon Size */}
-      <div className="grid w-full max-w-sm items-center gap-2">
-        <Label htmlFor="icon-size">Set Icon Size</Label>
-        <Slider
-          id="icon-size"
-          min={12}
-          max={72}
-          step={1}
-          value={[icon.size]}
-          onValueChange={(value) =>
-            setIcon((prev) => ({ ...prev, size: value[0] }))
-          }
-          className="py-4"
+    <TabsContent value="icon" className="w-full overflow-y-auto p-0">
+      <div className="flex flex-col gap-6 border-b p-4">
+        {/* Section Header */}
+        <SectionHeader
+          title="Size & Color"
+          icon={SlidersHorizontal}
+          badge={`${icon.size}px`}
+          description="Customize the appearance of your icon"
         />
-        <Input
-          id="icon-size"
-          type="number"
-          placeholder="Icon Size"
-          className=""
-          value={icon.size}
-          onChange={(e) => {
-            setIcon((prev) => ({
-              ...prev,
-              size: Number(e.target.value),
-            }));
-          }}
-        />
-      </div>
 
-      {/* Set Icon Color */}
-      <div className="grid w-full max-w-sm items-center gap-2">
-        <Label htmlFor="icon-color-picker">Set Icon Color</Label>
-        {/* <Popover>
-          <PopoverTrigger asChild id="icon-color-picker">
-            <div>
-              <Button
-                variant="outline"
-                className="flex items-center justify-between p-0 w-fit"
-              >
-                <span className="px-2">Pick Icon Color</span>
-                <div
-                  className="inline-block h-full aspect-square rounded-r-md"
-                  style={{ backgroundColor: icon.color.hex }}
-                />
-              </Button>
-            </div>
-          </PopoverTrigger>
-          <PopoverContent className="w-fit bg-primary-foreground"> */}
-        <ColorPicker
-          color={icon.color}
-          onChange={(color) => setIcon((prev) => ({ ...prev, color: color }))}
-        />
-        {/* </PopoverContent>
-        </Popover> */}
+        {/* Pick Icon Size */}
+        <div className="grid gap-4">
+          <NumberInputWithSlider
+            id="icon-size"
+            label="Icon Size"
+            min={12}
+            max={72}
+            step={1}
+            value={icon.size}
+            unit="px"
+            onChange={(value) => setIcon((prev) => ({ ...prev, size: value }))}
+          />
+
+          {/* Set Icon Color */}
+          <div className="space-y-2">
+            <label className="text-xs text-muted-foreground">Icon Color</label>
+            <ColorPickerField
+              color={icon.color}
+              onChange={(color) =>
+                setIcon((prev) => ({ ...prev, color: color }))
+              }
+            />
+          </div>
+        </div>
       </div>
 
       {/* Pick Icon */}
-      <div className="grid w-full max-w-sm items-center gap-2">
-        <Label htmlFor="icon-picker">Pick Icon</Label>
+      <div className="p-4">
+        <SectionHeader
+          title="Icon Selection"
+          icon={Image}
+          badge={
+            icon.icon
+              ? String(icon.icon).charAt(0).toUpperCase() +
+                String(icon.icon).slice(1)
+              : "None"
+          }
+          description="Browse and select an icon to include in your design"
+          className="mb-4"
+        />
+
         <IconSelector
           id="icon-picker"
           value={icon.icon}
