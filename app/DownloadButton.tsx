@@ -111,17 +111,17 @@ export const DownloadButton = forwardRef<
         <Button
           id={id}
           variant="action"
-          className="p-4 rounded-full h-fit w-fit"
+          className="h-fit w-fit rounded-full p-4"
           name="Download"
         >
           <Download size={24} />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="flex flex-col gap-2 bg-transparent border-none shadow-none w-fit min-w-fit">
+      <DropdownMenuContent className="flex w-fit min-w-fit flex-col gap-2 border-none bg-transparent shadow-none">
         {formats.map((format, idx) => (
           <DropdownMenuItem
             key={idx}
-            className="flex justify-center p-2 w-full text-center rounded-full border aspect-square bg-popover hover:bg-gray-100"
+            className="flex aspect-square w-full justify-center rounded-full border bg-popover p-2 text-center hover:bg-gray-100"
             onClick={() => handleDownload(format)}
           >
             {format.toUpperCase()}

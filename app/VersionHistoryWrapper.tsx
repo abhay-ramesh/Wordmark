@@ -9,7 +9,7 @@ export function VersionHistoryWrapper() {
 
   // Render the version history UI
   return (
-    <div className="w-full max-w-full">
+    <div className="hidden w-full max-w-full md:block">
       <VersionHistory />
     </div>
   );

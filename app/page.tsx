@@ -4,6 +4,12 @@ import { CommandPalette } from "@/components/CommandPalette";
 import { KeyboardShortcuts } from "@/components/KeyboardShortcuts";
 import { Button } from "@/components/ui/button";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
@@ -14,11 +20,11 @@ import { Units } from "@/lib/constants";
 import { getAllFontList } from "@/lib/fontProviders";
 import { fontAtom } from "@/lib/statemanager";
 import { useAtom } from "jotai";
-import { Boxes, Github, Keyboard } from "lucide-react";
+import { Boxes, Download, Github } from "lucide-react";
 import { useCallback, useState } from "react";
 import { CardTab, IconTab, LayoutTab, MenuList, TextTab } from "./_tabs";
 import { DisplayCard } from "./DisplayCard";
-import { DownloadButton } from "./DownloadButton";
+import { DownloadButton, downloadHandler } from "./DownloadButton";
 import { RandomFontButton } from "./RandomFontButton";
 import { VersionHistoryWrapper } from "./VersionHistoryWrapper";
 
@@ -118,7 +124,35 @@ export default function Home() {
                 <div className="flex flex-col items-center justify-center gap-4">
                   <DisplayCard />
 
-                  <RandomFontButton onRandomFont={selectRandomFont} />
+                  <div className="flex gap-2">
+                    <RandomFontButton onRandomFont={selectRandomFont} />
+                    <DropdownMenu>
+                      <DropdownMenuTrigger className="" asChild>
+                        <Button variant="outline">
+                          <Download size={18} />
+                          <span className="text-sm font-medium">Download</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        align="center"
+                        className="bg-background/90 backdrop-blur-sm"
+                      >
+                        {["PNG", "SVG", "JPEG"].map((format, i) => (
+                          <DropdownMenuItem
+                            key={i}
+                            onClick={() =>
+                              downloadHandler.download(
+                                format.toLowerCase() as any,
+                              )
+                            }
+                            className="cursor-pointer px-3 py-1.5 text-xs transition-colors hover:bg-accent/20"
+                          >
+                            {format}
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
                 </div>
               </div>
               <VersionHistoryWrapper />
@@ -146,26 +180,50 @@ export default function Home() {
                 Abhay Ramesh
               </a>
             </span>
-            <span className="mx-2">•</span>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-6 gap-1.5 px-2 text-xs text-muted-foreground"
-              onClick={() => setCommandPaletteOpen(true)}
-            >
-              <Keyboard className="h-3.5 w-3.5" />
-              <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100">
-                ⌘K
-              </kbd>
-            </Button>
           </div>
+        </div>
+
+        <div className="relative mt-2 flex h-1/3 w-full flex-col items-center justify-center rounded-lg border p-4">
+          <div className="flex w-full flex-1 items-center justify-center">
+            <DisplayCard />
+          </div>
+          <div className="mt-2">
+            <div className="flex gap-2">
+              <RandomFontButton onRandomFont={selectRandomFont} />
+              <DropdownMenu>
+                <DropdownMenuTrigger className="" asChild>
+                  <Button variant="outline">
+                    <Download size={18} />
+                    <span className="text-sm font-medium">Download</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="center"
+                  className="bg-background/90 backdrop-blur-sm"
+                >
+                  {["PNG", "SVG", "JPEG"].map((format, i) => (
+                    <DropdownMenuItem
+                      key={i}
+                      onClick={() =>
+                        downloadHandler.download(format.toLowerCase() as any)
+                      }
+                      className="cursor-pointer px-3 py-1.5 text-xs transition-colors hover:bg-accent/20"
+                    >
+                      {format}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
+          <VersionHistoryWrapper />
         </div>
 
         <aside className="mt-2 flex max-h-[calc(100vh-300px)] w-full flex-col overflow-hidden">
           <Tabs
             orientation="vertical"
             defaultValue="text"
-            className="flex h-full w-full flex-col rounded-lg border bg-muted/80"
+            className="flex h-full w-full flex-col overflow-y-auto rounded-lg border bg-muted/80"
           >
             <MenuList />
             <Separator orientation="horizontal" />
@@ -175,16 +233,6 @@ export default function Home() {
             <LayoutTab />
           </Tabs>
         </aside>
-
-        <div className="relative mt-2 flex h-1/3 w-full flex-col items-center justify-center rounded-lg border p-4">
-          <div className="flex w-full flex-1 items-center justify-center">
-            <DisplayCard />
-          </div>
-          <div className="mt-2">
-            <RandomFontButton onRandomFont={selectRandomFont} />
-          </div>
-          <VersionHistoryWrapper />
-        </div>
 
         {/* Mobile GitHub star link */}
         <div className="mt-2 flex flex-row items-center justify-center rounded-lg border px-4 py-3">

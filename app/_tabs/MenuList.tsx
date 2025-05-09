@@ -1,5 +1,6 @@
 "use client";
 import { downloadHandler } from "@/app/DownloadButton";
+import { ShortcutsHelp } from "@/components/ShortcutsHelp";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,7 +19,8 @@ import {
 import {
   Download,
   Github,
-  Image,
+  Image as ImageIcon,
+  Keyboard,
   Layout,
   MessageCircle,
   Square,
@@ -35,7 +37,7 @@ const menuItems = [
   },
   {
     name: "icon",
-    icon: <Image size={18} />,
+    icon: <ImageIcon size={18} />,
     label: "Icon",
     description: "Choose and customize an icon for your design",
   },
@@ -64,6 +66,12 @@ const utilityItems = [
     tooltip: "Give feedback",
     action: "link",
     href: "https://github.com/abhay-ramesh/wordmark/issues",
+  },
+  {
+    icon: <Keyboard size={18} />,
+    tooltip: "Keyboard shortcuts",
+    action: "custom",
+    component: <ShortcutsHelp />,
   },
   {
     icon: <Download size={18} />,
@@ -178,6 +186,8 @@ export const MenuList = () => {
                         >
                           {item.icon}
                         </a>
+                      ) : item.action === "custom" ? (
+                        item.component
                       ) : (
                         <div className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-all duration-200 hover:bg-accent/20 hover:text-foreground">
                           {item.icon}
