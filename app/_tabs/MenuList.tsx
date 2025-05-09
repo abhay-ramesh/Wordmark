@@ -1,5 +1,6 @@
 "use client";
 import { downloadHandler, useDownloadStore } from "@/app/DownloadButton";
+import { restartOnboarding } from "@/components/Onboarding";
 import { ShortcutsHelp } from "@/components/ShortcutsHelp";
 import {
   DropdownMenu,
@@ -19,6 +20,7 @@ import {
 import {
   Download,
   Github,
+  HelpCircle,
   Image as ImageIcon,
   Keyboard,
   Layout,
@@ -80,6 +82,12 @@ const utilityItems = [
     action: "dropdown",
   },
   {
+    icon: <HelpCircle size={18} />,
+    tooltip: "Show Tutorial",
+    action: "function",
+    onClick: restartOnboarding,
+  },
+  {
     icon: <Github size={18} />,
     tooltip: "Star on GitHub",
     action: "link",
@@ -106,6 +114,7 @@ export const MenuList = () => {
                     data-[state=active]:bg-accent/40 data-[state=active]:shadow-sm 
                     md:h-14 md:w-14"
                     value={item.name}
+                    data-tab={item.name}
                   >
                     <div
                       className="flex items-center justify-center 
@@ -203,6 +212,13 @@ export const MenuList = () => {
                         </a>
                       ) : item.action === "custom" ? (
                         item.component
+                      ) : item.action === "function" ? (
+                        <button
+                          onClick={item.onClick}
+                          className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-all duration-200 hover:bg-accent/20 hover:text-foreground"
+                        >
+                          {item.icon}
+                        </button>
                       ) : (
                         <div className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-all duration-200 hover:bg-accent/20 hover:text-foreground">
                           {item.icon}

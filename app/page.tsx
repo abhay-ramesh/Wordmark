@@ -2,6 +2,7 @@
 
 import { CommandPalette } from "@/components/CommandPalette";
 import { KeyboardShortcuts } from "@/components/KeyboardShortcuts";
+import { Onboarding } from "@/components/Onboarding";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -59,6 +60,9 @@ export default function Home() {
     <div className="relative flex min-h-screen flex-col-reverse justify-end space-y-2 space-y-reverse p-4 md:h-screen md:space-y-0">
       {/* Invisible DownloadButton to initialize the download handler */}
       <DownloadButton invisible />
+
+      {/* Onboarding component */}
+      <Onboarding />
 
       {/* Keyboard shortcuts */}
       <KeyboardShortcuts

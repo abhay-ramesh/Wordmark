@@ -58,3 +58,38 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Onboarding Styles */
+.onboarding-highlight {
+  position: relative;
+  z-index: 40;
+  box-shadow:
+    0 0 0 4px rgba(var(--primary), 0.3),
+    0 0 0 2px rgba(var(--primary), 0.5);
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  border-radius: 0.25rem;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 4px rgba(var(--primary), 0.3),
+      0 0 0 2px rgba(var(--primary), 0.5);
+  }
+  50% {
+    box-shadow:
+      0 0 0 6px rgba(var(--primary), 0.2),
+      0 0 0 3px rgba(var(--primary), 0.4);
+  }
+}
+
+/* Responsive adjustments for onboarding tooltips */
+@media (max-width: 640px) {
+  #onboarding-tooltip,
+  [id^="onboarding-tooltip"] {
+    width: calc(100% - 32px) !important; /* Adjust width on small screens */
+    max-width: 280px; /* Maximum width */
+    z-index: 100; /* Ensure it's on top of other elements */
+  }
+}
