@@ -23,21 +23,38 @@ import { cn } from "@/lib/utils";
 import {
   Boxes,
   CaseSensitive,
+  Download,
+  DownloadCloud,
   FoldHorizontal,
   FolderHeart,
   LayoutDashboard,
   Palette,
 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ColorPicker, useColor } from "react-color-palette";
 import { IconGrid } from "../components/custom/IconGrid";
 import { SelectedIcon } from "../components/custom/SelectedIcon";
 import { GoogleFonts } from "./GoogleFonts";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { toPng, toJpeg, toSvg, toCanvas } from "html-to-image";
 
 type UnitType = (typeof Units)[number];
 
 export default function Home() {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [downloadFormat, setDownloadFormat] = useState<"png" | "jpg" | "svg">(
+    "png",
+  );
   const [logoName, setLogoName] = useState<string>("Wordmark.");
   const [icon, setIcon] = useState<string>("Boxes");
   const [layout, setLayout] = useState<Layouts>("ltr");
@@ -84,6 +101,39 @@ export default function Home() {
       });
     }
   }, []);
+
+  // download logo with desired format
+  const downloadLogo = async (format: "png" | "jpg" | "svg") => {
+    const node = cardRef.current;
+
+    if (node) {
+      switch (format) {
+        case "png":
+          const png = await toPng(node);
+          const link = document.createElement("a");
+          link.download = "logo.png";
+          link.href = png;
+          link.click();
+          break;
+        case "jpg":
+          const jpg = await toJpeg(node);
+          const link2 = document.createElement("a");
+          link2.download = "logo.jpg";
+          link2.href = jpg;
+          link2.click();
+          break;
+        case "svg":
+          const svg = await toSvg(node);
+          const link3 = document.createElement("a");
+          link3.download = "logo.svg";
+          link3.href = svg;
+          link3.click();
+          break;
+        default:
+          break;
+      }
+    }
+  };
 
   return (
     <>
@@ -354,7 +404,10 @@ export default function Home() {
       </aside>
       <div className="relative flex h-1/3 w-full items-center justify-center rounded-lg border p-4 md:h-full">
         <Card
-          className={cn(LayoutVariants({ layout }), "mx-auto my-4 shadow-2xl")}
+          className={cn(
+            LayoutVariants({ layout }),
+            "mx-auto my-4 rounded-none border-none shadow-2xl",
+          )}
           // add height and width
           style={{
             backgroundColor: bgColor.hex,
@@ -382,8 +435,76 @@ export default function Home() {
         </Card>
         <Credits isMobileViewVisible={false} />
       </div>
+      <Dialog>
+        <DialogTrigger
+          asChild
+          className="absolute bottom-5 right-5 z-20 cursor-pointer gap-2 rounded-full md:flex"
+        >
+          <Button variant="default">
+            <Download /> Download
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="w-fit">
+          <DialogHeader>
+            <DialogTitle>Download Logo</DialogTitle>
+            <DialogDescription>
+              Download your logo in Desired Format
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mx-auto w-fit rounded-lg bg-gray-100 p-4">
+            <Card
+              className={cn(
+                LayoutVariants({ layout }),
+                "m-0 rounded-none border-none shadow-none",
+              )}
+              ref={cardRef}
+              // add height and width
+              style={{
+                backgroundColor: bgColor.hex,
+                height: cardSize.height.value + cardSize.height.unit,
+                width: cardSize.width.value + cardSize.width.unit,
+              }}
+            >
+              {layout !== "text" && (
+                <SelectedIcon
+                  icon={icon}
+                  onlyIcon
+                  style={{ color: iconColor.hex }}
+                />
+              )}
+              {layout !== "icon" && layout !== "circle" && (
+                <text
+                  className={cn(
+                    "w-fit text-center text-2xl font-semibold text-gray-600 [text-wrap:balance]",
+                  )}
+                  style={{ color: textColor.hex }}
+                >
+                  {logoName}
+                </text>
+              )}
+            </Card>
+          </div>
+          <DialogFooter>
+            <Select defaultValue="png">
+              <SelectTrigger className="w-fit">
+                <SelectValue placeholder="Format" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="png">PNG</SelectItem>
+                <SelectItem value="jpg">JPG</SelectItem>
+                <SelectItem value="svg">SVG</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button type="button" onClick={() => downloadLogo(downloadFormat)}>
+              {" "}
+              Download{" "}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       <div className="flex h-20 w-full items-center justify-center space-x-2 rounded-lg border bg-primary-foreground text-center text-gray-600 md:hidden">
         <Boxes size={32} className="" />
+
         <text className="w-fit text-center text-2xl font-semibold [text-wrap:balance]">
           Wordmark
         </text>
